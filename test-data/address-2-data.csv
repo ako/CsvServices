@@ -1,0 +1,44 @@
+AddressId,Street,Zipcode,City,Country,Latitude,Longitude
+501,Zwolsestraat 23, 2587 TX, Den Haag, Nederland,52.11396,4.286734
+502,Gevers Deynootstraat 22, 2586 HT,Den Haag, Nederland,52.113393,4.286812
+503,Utrechtsestraat 3-7,2586, Den Haag, Nederland,52.113453,4.285929
+504,Harstenhoekplein 15, 2587 SN, Den Haag, Nederland,52.112497,4.287918
+505,Harstenhoekweg 37-139, 2587 SH, Den Haag, Nederland,52.112517,4.289222
+506,Bosschestraat 128, 2587 HH,Den Haag, Nederland,52.112021,4.289658
+507,Hasseltsestraat 14, 2587 GP, Den Haag, Nederland,52.11094,4.293701
+508,Stevinstraat 185, 2587 EE, Den Haag, Nederland,52.110914,4.292323
+509,Brusselselaan 15, 2587 AJ, Den Haag, Nederland,52.107755,4.298658
+510,Goetlijfstraat 64, 2596 RK, Den Haag, Nederland,52.096314,4.31591
+511,Van Imhoffplein 3, 2595 SH, Den Haag, Nederland,52.081178,4.339642
+512,Hogeveenseweg 2, 2631 PH, Nootdorp, Nederland,52.04331,4.406495
+513,Amaril 18, 2719 TR, Zoetermeer, Nederland,52.033516,4.479924
+514,Eerste Loevesteinhof 1, 2804 EW, Gouda, Nederland,52.030163,4.710336
+515,Einsteinstraat 52, 1433 BG, Kudelstaart, Nederland,52.236375,4.751271
+516,Rembrandtweg 37, 1181 GE, Amstelveen, Nederland,52.304235,4.861649
+517,Quellijnstraat 128-156,1073, Amsterdam, Nederland,52.35657,4.894392
+518,Kuipersstraat 62V3, 1074 EN, Amsterdam, Nederland,52.353792,4.903468
+519,Ruyschstraat 65B, 1091 BW, Amsterdam, Nederland,52.357867,4.911515
+520,Valckenierstraat 19II, 1018 XC, Amsterdam, Nederland,52.362008,4.909412
+521,Oudezijds Achterburgwal 79I, 1012 DC, Amsterdam, Nederland,52.372817,4.898619
+522,Willem van Hillegaersbergstraat 68, 3051 RM, Rotterdam, Nederland,51.946089,4.485913
+523,Robert Kochplaats 300, 3068 JD, Rotterdam, Nederland,51.959049,4.538871
+524,2e Blekerhof 28, 3011 CK, Rotterdam, Nederland,51.916081,4.481107
+525,Kapelstraat 22B, 3024 CG, Rotterdam, Nederland,51.905968,4.458362
+526,Fruitlaan 42, 3072 WK, Rotterdam, Nederland,51.900831,4.479734
+527,Courzandseweg 45, 3089 PE, Rotterdam, Nederland,51.892629,4.421422
+528,Courzandseweg 18, 3089 PD, Rotterdam, Nederland,51.895264,4.419277
+529,Papaverstraat 5, 6542 MT, Nijmegen, Nederland,51.838312,5.843173
+530,Krayenhofflaan 164D, 6541 PX, Nijmegen, Nederland,51.844585,5.848529
+531,Prins Hendrikstraat 71, 6521 AX, Nijmegen, Nederland,51.84194,5.870255
+532,Pauwstraat 1, 6811 GK, Arnhem, Nederland,51.982476,5.905076
+533,Johannisstraße 34,49074, Osnabrück, Duitsland,52.269502,8.051886
+534,Schwanenburgstraße 99,49084, Osnabrück, Duitsland,52.283471,8.082613
+535,Timmersloher Straße 45,28215, Bremen, Duitsland,53.092618,8.808032
+536,Parkallee 5,20144, Hamburg, Duitsland,53.573253,9.983231
+537,Stegholt 28,6200, Aabenraa, Denemarken,55.032266,9.414201
+538,Østervænget 22A,6710, Esbjerg V, Denemarken,55.51844,8.366036
+539,Sønder-Vasevej 104,6857, Blåvand, Denemarken,55.549959,8.129519
+540,Michel Broes Vej 17-21,7700, Thisted, Denemarken,57.041406,8.496509
+541,Kildevej 25,2960, Rungsted Kyst, Denemarken,55.891257,12.532111
+542,9 Rue Malebranche,75005, Paris, Frankrijk,48.846293,2.342554
+543,Via delle Motte,29, Ispra VA, Italië,45.822954,8.633608

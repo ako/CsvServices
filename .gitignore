@@ -1,0 +1,7 @@
+.idea
+*.iml
+*.launch
+*.class
+deployment
+*.mpr.bak
+*.mpr.lock
