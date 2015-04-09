@@ -1,0 +1,4 @@
+#To load: curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Tests/AllTypes --data-binary "@alltypes.csv"
+CurrencyValue,IntegerValue,BinaryValue,BooleanValue,DecimalValue,HashedStringValue,LongValue,EnumValue,StringValue,FloatValue
+43.1234,65536,,true,1240404.5,"HelloWorld",1320,"No","HelloNl!",34.9600
+42.12342323,265536,,false,0.51231,"zwxWw Wx wx WW Xwx Wxw HelloWorld",1320,"Yes","qwe we wec wec wc",34.9600

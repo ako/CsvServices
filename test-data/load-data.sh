@@ -6,3 +6,5 @@ curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-d
 curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Customers --data-binary "@customers-data.csv"
 curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Orders --data-binary "@orders-data.csv"
 curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/OrderLines --data-binary "@orderlines-data.csv"
+
+curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Tests/Dates --data-binary "@dates1.csv"

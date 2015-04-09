@@ -33,16 +33,29 @@ public class CsvImporter {
         String line = null;
         int lineNo = 0;
         String[] attributeNames = null;
-        while ((line = bufferedReader.readLine()) != null) {
-            logger.info(line);
+        String[] attributeFormats = null;
+        logger.info("start reading file");
+        line = bufferedReader.readLine();
+        logger.info("line read: " + line);
+        while (line != null) {
+            logger.info("line read: " + line);
             if (line.startsWith("#") || line.length() == 0) {
+                line = bufferedReader.readLine();
                 continue;
             }
             if (lineNo == 0) {
                 // Header line
                 attributeNames = line.split(csvSplitter);
+                attributeFormats = new String[attributeNames.length];
                 for (int i = 0; i < attributeNames.length; i++) {
+                    attributeNames[i] = attributeNames[i].trim();
                     attributeNames[i] = attributeNames[i].replaceAll("^\"|\"$", "");
+                    if(attributeNames[i].indexOf("(") >= 0){
+                        // format included in braces
+                        attributeFormats[i] = attributeNames[i].substring(attributeNames[i].indexOf("(")+1, attributeNames[i].length() - 1);
+                        attributeNames[i] = attributeNames[i].substring(0,attributeNames[i].indexOf("("));
+                    }
+                    logger.info("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
                 }
             } else {
                 IMendixObject object = null;
@@ -50,6 +63,7 @@ public class CsvImporter {
                     object = Core.instantiate(context, moduleName + "." + entityName);
                     String[] values = line.split(csvSplitter);
                     for (int i = 0; i < values.length; i++) {
+                        values[i] = values[i].trim();
                         logger.info(String.format("value: %s = %s", attributeNames[i], values[i]));
                         /*
                          * check if reference
@@ -104,13 +118,18 @@ public class CsvImporter {
                             IMetaPrimitive.PrimitiveType type = primitive.getType();
                             logger.info("attribute type: " + type.name());
                             // todo: cache instance, and yes, there are probably nicer ways to code this
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("YYYY-MM-dd");
-                            SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/YYYY");
-                            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss");
+                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                            SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
+                            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             values[i] = values[i].trim();
                             if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
                                 try {
-                                    object.setValue(context, attributeNames[i], dateTimeFormat.parse(values[i].replaceAll("^\"|\"$", "")));
+                                    if ( attributeFormats[i] != null ){
+                                        SimpleDateFormat customDateFormat = new SimpleDateFormat(attributeFormats[i]);
+                                        object.setValue(context, attributeNames[i], customDateFormat.parse(values[i].replaceAll("^\"|\"$", "")));
+                                    }else {
+                                        object.setValue(context, attributeNames[i], dateTimeFormat.parse(values[i].replaceAll("^\"|\"$", "")));
+                                    }
                                 } catch (ParseException e) {
                                     try {
                                         object.setValue(context, attributeNames[i], dateFormat.parse(values[i].replaceAll("^\"|\"$", "")));
@@ -127,6 +146,7 @@ public class CsvImporter {
                             }
                         }
                     }
+                    logger.info("commiting object: " + object);
                     Core.commit(context, object);
                 } catch (CoreException e) {
                     logger.warn("failed to create object: " + object);
@@ -137,6 +157,7 @@ public class CsvImporter {
                 }
             }
             lineNo++;
+            line = bufferedReader.readLine();
         }
         logger.info("objects created: " + lineNo);
     }
