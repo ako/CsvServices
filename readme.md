@@ -1,7 +1,11 @@
 # Csv Services
 
-Mendix module that creates a rest endpoint for all entities supporting csv data format. This can be used to load
-data into a Mendix application, and to export data. For example for reporting or setting up the initial data.
+Mendix module that creates a rest endpoint for all entities supporting csv data format. 
+
+Currently this serves 2 main use cases:
+
+ * This can be used to load data into a Mendix application, to quickly setup demo or test applications. 
+ * Export data for reporting in external tools like R.
 
 Csv import has support for specifying associations so you can have a csv's for all your entities and initialize you data entirely from csv files. 
 There are a number of website that will generate random data in csv format, including valid address information with longitude and latitude so you can test your google maps widgets.
@@ -26,14 +30,9 @@ To install:
 Notes:
 
  1. Currently you need to provide a username and password when calling a csv services endpoint. Anonymous usage is not supported.
-
+ 2. The ws-doc endpoint is reused to make it work in sandboxes. This means it is not compatible with the Rest services module. This restriction will be removed in the near future.
+ 
 ## Usage
-
-### Export CSV
-
-Use the GET operation to export all objects of an entity:
-
-    curl -v -X GET http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels
 
 ### Import CSV
 
@@ -65,3 +64,20 @@ Notes:
         3,         gi,        Fuli juja.,      19411, [3]
         4,         cas,       Pon duz apkar.,  4596,  [23;2]
         5,         pignadhiz, Hevizkug.,       25041, [1;2;3]
+
+### Export CSV
+
+Use the GET operation to export all objects of an entity:
+
+    curl -v -X GET http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels
+
+#### Reporting with R
+
+You can easily use live Mendix data in R or Rstudio using the csv services module.
+
+An example how you can load data from Mendix into R:
+
+    require(httr)
+    secret <- RCurl::base64(paste('MxAdmin', '1', sep = ":"));
+    req1 <- GET("http://localhost:8080/ws-doc/Orders/Orders",config(httpheader = c("Authorization" = paste("Basic",secret))))
+    orders <- content(req1)
