@@ -55,6 +55,7 @@ public class CsvExportInitializeAction extends CustomJavaAction<Boolean>
 
 	// BEGIN EXTRA CODE
     private static ILogNode logger = Core.getLogger(CsvExportInitializeAction.class.getName());
+
     private static void startSandboxCompatibilityMode(IContext context) {
         CsvRestHandler.serviceRoot = "ws-doc/";
         final IContext ctx = context;

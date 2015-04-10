@@ -119,11 +119,10 @@ public class CsvExporter {
             } else if (value.getClass().equals(MendixIdentifier.class)) {
                 logger.info("mxid: " + ((MendixIdentifier) value).toLong());
                 csvValue = String.format("%d", ((MendixIdentifier) value).toLong());
-            } else if (value.getClass().equals(Boolean.class)){
+            } else if (value.getClass().equals(Boolean.class)) {
                 logger.info("boolean = " + value);
                 csvValue = String.format("%b", value);
-            }
-            else {
+            } else {
                 csvValue = String.format("%g", value);
             }
         }

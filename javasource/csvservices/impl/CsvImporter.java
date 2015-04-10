@@ -12,6 +12,7 @@ import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
 
 import java.io.*;
+import java.text.Format;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,26 +35,29 @@ public class CsvImporter {
         int lineNo = 0;
         String[] attributeNames = null;
         String[] attributeFormats = null;
-        logger.info("start reading file");
-        line = bufferedReader.readLine();
-        logger.info("line read: " + line);
-        while (line != null) {
-            logger.info("line read: " + line);
+        Format[] attributeFormatters = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+        while ((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("#") || line.length() == 0) {
-                line = bufferedReader.readLine();
                 continue;
             }
             if (lineNo == 0) {
                 // Header line
                 attributeNames = line.split(csvSplitter);
                 attributeFormats = new String[attributeNames.length];
+                attributeFormatters = new Format[attributeNames.length];
                 for (int i = 0; i < attributeNames.length; i++) {
                     attributeNames[i] = attributeNames[i].trim();
                     attributeNames[i] = attributeNames[i].replaceAll("^\"|\"$", "");
-                    if(attributeNames[i].indexOf("(") >= 0){
+                    if (attributeNames[i].indexOf("(") >= 0) {
                         // format included in braces
-                        attributeFormats[i] = attributeNames[i].substring(attributeNames[i].indexOf("(")+1, attributeNames[i].length() - 1);
-                        attributeNames[i] = attributeNames[i].substring(0,attributeNames[i].indexOf("("));
+                        attributeFormats[i] = attributeNames[i].substring(attributeNames[i].indexOf("(") + 1, attributeNames[i].length() - 1);
+                        attributeNames[i] = attributeNames[i].substring(0, attributeNames[i].indexOf("("));
+                        attributeFormatters[i] = new SimpleDateFormat(attributeFormats[i]);
                     }
                     logger.info("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
                 }
@@ -117,17 +121,12 @@ public class CsvImporter {
                             IMetaPrimitive primitive = object.getMetaObject().getMetaPrimitive(attributeNames[i]);
                             IMetaPrimitive.PrimitiveType type = primitive.getType();
                             logger.info("attribute type: " + type.name());
-                            // todo: cache instance, and yes, there are probably nicer ways to code this
-                            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                            SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-                            SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                             values[i] = values[i].trim();
                             if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
                                 try {
-                                    if ( attributeFormats[i] != null ){
-                                        SimpleDateFormat customDateFormat = new SimpleDateFormat(attributeFormats[i]);
-                                        object.setValue(context, attributeNames[i], customDateFormat.parse(values[i].replaceAll("^\"|\"$", "")));
-                                    }else {
+                                    if (attributeFormats[i] != null) {
+                                        object.setValue(context, attributeNames[i], attributeFormatters[i].parseObject(values[i].replaceAll("^\"|\"$", "")));
+                                    } else {
                                         object.setValue(context, attributeNames[i], dateTimeFormat.parse(values[i].replaceAll("^\"|\"$", "")));
                                     }
                                 } catch (ParseException e) {
@@ -157,7 +156,6 @@ public class CsvImporter {
                 }
             }
             lineNo++;
-            line = bufferedReader.readLine();
         }
         logger.info("objects created: " + lineNo);
     }

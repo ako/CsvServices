@@ -1,6 +1,6 @@
 # Csv Services
 
-Mendix module that creates a rest endpoint for all entities supporting csv data format. 
+Mendix module that creates a rest endpoint for all entities supporting csv data format. Basically a Excel Exporter, Excel Importer meets Rest services. This enables you to automate csv export and import using script, reducing the number of manual actions required.
 
 Currently this serves 2 main use cases:
 
@@ -65,6 +65,21 @@ Notes:
         4,         cas,       Pon duz apkar.,  4596,  [23;2]
         5,         pignadhiz, Hevizkug.,       25041, [1;2;3]
 
+#### Initializing a Mendix application
+ 
+Using curl you can create scripts to initialize your Mendix application without any manual actions straight from Excel spreadsheets.
+
+The test-data folder contains an example for the Orders module, load-data.sh:
+
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Products --data-binary "@products-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Address --data-binary "@address-2-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Address --data-binary "@address-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Address --data-binary "@addresses-uk-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Customers --data-binary "@customers-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Orders --data-binary "@orders-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/OrderLines --data-binary "@orderlines-data.csv"
+
 ### Export CSV
 
 Use the GET operation to export all objects of an entity:
@@ -81,3 +96,7 @@ An example how you can load data from Mendix into R:
     secret <- RCurl::base64(paste('MxAdmin', '1', sep = ":"));
     req1 <- GET("http://localhost:8080/ws-doc/Orders/Orders",config(httpheader = c("Authorization" = paste("Basic",secret))))
     orders <- content(req1)
+
+### Tips
+
+* It helps if you create a public key attribute for every entity, which can be used in associations. For example, the Orders entity has a OrderId attribute.
