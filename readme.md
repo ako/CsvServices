@@ -4,7 +4,7 @@ Mendix module that creates a rest endpoint for all entities supporting csv data 
 
 Currently this serves 2 main use cases:
 
- * This can be used to load data into a Mendix application, to quickly setup demo or test applications. 
+ * This can be used to script initial data loading into a Mendix application, to quickly setup demo or test applications. 
  * Export data for reporting in external tools like R.
 
 Csv import has support for specifying associations so you can have a csv's for all your entities and initialize you data entirely from csv files. 

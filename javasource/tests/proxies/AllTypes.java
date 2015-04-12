@@ -39,7 +39,9 @@ public class AllTypes
 		DecimalValue("DecimalValue"),
 		CurrencyValue("CurrencyValue"),
 		BooleanValue("BooleanValue"),
-		BinaryValue("BinaryValue");
+		BinaryValue("BinaryValue"),
+		DateTimeValue("DateTimeValue"),
+		String2Value("String2Value");
 
 		private String metaName;
 
@@ -478,6 +480,78 @@ public class AllTypes
 			try { commit(); } catch (CoreException ex) { }
 		MendixBinary binary = (MendixBinary) getMendixObject().getMember(context, MemberNames.BinaryValue.toString());
 		binary.storeValue(context, inputStream, length);
+	}
+
+	/**
+	 * @return value of DateTimeValue
+	 */
+	public final java.util.Date getDateTimeValue()
+	{
+		return getDateTimeValue(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of DateTimeValue
+	 */
+	public final java.util.Date getDateTimeValue(IContext context)
+	{
+		return (java.util.Date) getMendixObject().getValue(context, MemberNames.DateTimeValue.toString());
+	}
+
+	/**
+	 * Set value of DateTimeValue
+	 * @param datetimevalue
+	 */
+	public final void setDateTimeValue(java.util.Date datetimevalue)
+	{
+		setDateTimeValue(getContext(), datetimevalue);
+	}
+
+	/**
+	 * Set value of DateTimeValue
+	 * @param context
+	 * @param datetimevalue
+	 */
+	public final void setDateTimeValue(IContext context, java.util.Date datetimevalue)
+	{
+		getMendixObject().setValue(context, MemberNames.DateTimeValue.toString(), datetimevalue);
+	}
+
+	/**
+	 * @return value of String2Value
+	 */
+	public final String getString2Value()
+	{
+		return getString2Value(getContext());
+	}
+
+	/**
+	 * @param context
+	 * @return value of String2Value
+	 */
+	public final String getString2Value(IContext context)
+	{
+		return (String) getMendixObject().getValue(context, MemberNames.String2Value.toString());
+	}
+
+	/**
+	 * Set value of String2Value
+	 * @param string2value
+	 */
+	public final void setString2Value(String string2value)
+	{
+		setString2Value(getContext(), string2value);
+	}
+
+	/**
+	 * Set value of String2Value
+	 * @param context
+	 * @param string2value
+	 */
+	public final void setString2Value(IContext context, String string2value)
+	{
+		getMendixObject().setValue(context, MemberNames.String2Value.toString(), string2value);
 	}
 
 	/**
