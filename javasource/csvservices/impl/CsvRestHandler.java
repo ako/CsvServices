@@ -41,16 +41,16 @@ public class CsvRestHandler extends RequestHandler {
          * get path
          */
         String pathInfo = iMxRuntimeRequest.getHttpServletRequest().getPathInfo().replace("/" + CsvRestHandler.serviceRoot, "");
-        logger.info("pathInfo: " + pathInfo);
+        logger.debug("pathInfo: " + pathInfo);
         String[] path = pathInfo.split("[\\/\\?\\#]");
         for (int i = 0; i < path.length; i++) {
-            logger.info("path, " + i + " " + path[i]);
+            logger.debug("path, " + i + " " + path[i]);
         }
         Writer writer = iMxRuntimeResponse.getWriter();
         /*
          * save all objects
          */
-        logger.info("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
+        logger.debug("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
         if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("POST")) {
             // inserting new objects
             CsvImporter importer = new CsvImporter();

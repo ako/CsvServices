@@ -1,4 +1,4 @@
-AddressId,Street,City,County,State,Zipcode,Country
+AddressId*,Street,City,County,State,Zipcode,Country
 544,75 Gravesend Road, Sunderland, Tyne and Wear,, SR4 9RB, Verenigd Koninkrijk
 545,3 Victoria Avenue Industrial Estate, Swanage, Dorset,, BH19 1BJ, Verenigd Koninkrijk
 546, Mare Lane, Twyford, Winchester, Hampshire, SO21, Verenigd Koninkrijk

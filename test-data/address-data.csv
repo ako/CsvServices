@@ -1,4 +1,4 @@
-AddressId,Street,City,County,State,Zipcode,Country
+AddressId*,Street,City,County,State,Zipcode,Country
 1,6649 N Blue Gum St,New Orleans,Orleans,LA,70116,US
 2,4 B Blue Ridge Blvd,Brighton,Livingston,MI,48116,US
 3,8 W Cerritos Ave #54,Bridgeport,Gloucester,NJ,8014,US

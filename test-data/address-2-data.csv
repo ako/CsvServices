@@ -1,4 +1,4 @@
-AddressId,Street,Zipcode,City,Country,Latitude,Longitude
+AddressId*,Street,Zipcode,City,Country,Latitude,Longitude
 501,Zwolsestraat 23, 2587 TX, Den Haag, Nederland,52.11396,4.286734
 502,Gevers Deynootstraat 22, 2586 HT,Den Haag, Nederland,52.113393,4.286812
 503,Utrechtsestraat 3-7,2586, Den Haag, Nederland,52.113453,4.285929

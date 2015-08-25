@@ -1,4 +1,4 @@
-LineId,LineNo,Quantity,Order_Lines.OrderNumber,Line_Product.ProductId
+LineId*,LineNo*,Quantity,Order_Lines.OrderNumber,Line_Product.ProductId
 #seq,seq,natural,natural,natural
 1,1,3,192,487
 2,2,3,785,278

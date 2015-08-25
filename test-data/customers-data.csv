@@ -1,6 +1,6 @@
 # test data generated on http://www.convertcsv.com/generate-test-data.htm
 # seq,first,last,birthday(2),natural(1300),natural(1300)
-CustomerId,Firstname,Lastname,DateOfBirth,Billing_Address.AddressId,Delivery_Address.AddressId
+CustomerId*,Firstname,Lastname,DateOfBirth,Billing_Address.AddressId,Delivery_Address.AddressId
 1,Ivan,Freeman,16/6/1907,1,1
 2,Anthony,Robinson,24/12/1938,2,2
 3,Kaden,Griffith,2/6/1907,3,3

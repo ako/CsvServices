@@ -93,7 +93,7 @@ public class CsvExporter {
         if (value == null) {
             csvValue = "";
         } else {
-            logger.info("value: " + value + "," + value.getClass());
+            logger.debug("value: " + value + "," + value.getClass());
             if (value.getClass().equals(Date.class)) {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
                 csvValue = dateFormat.format(value);
@@ -101,12 +101,12 @@ public class CsvExporter {
                 csvValue = String.format("\"%s\"", value);
             } else if (value.getClass().equals(ArrayList.class)) {
                 csvValue = "";
-                logger.info("arrayList.size: " + ((ArrayList) value).size());
+                logger.debug("arrayList.size: " + ((ArrayList) value).size());
                 ListIterator iter = ((ArrayList) value).listIterator();
                 String arrayPrefix = "";
                 while (iter.hasNext()) {
                     MendixIdentifier o = (MendixIdentifier) iter.next();
-                    logger.info(" - arraylist: " + o);
+                    logger.debug(" - arraylist: " + o);
                     csvValue += arrayPrefix + o.toLong();
                     arrayPrefix = ";";
                 }
@@ -114,13 +114,13 @@ public class CsvExporter {
             } else if (value.getClass().equals(Integer.class)
                     || value.getClass().equals(Long.class)
                     ) {
-                logger.info("int/long = " + value);
+                logger.debug("int/long = " + value);
                 csvValue = String.format("%d", value);
             } else if (value.getClass().equals(MendixIdentifier.class)) {
-                logger.info("mxid: " + ((MendixIdentifier) value).toLong());
+                logger.debug("mxid: " + ((MendixIdentifier) value).toLong());
                 csvValue = String.format("%d", ((MendixIdentifier) value).toLong());
             } else if (value.getClass().equals(Boolean.class)) {
-                logger.info("boolean = " + value);
+                logger.debug("boolean = " + value);
                 csvValue = String.format("%b", value);
             } else {
                 csvValue = String.format("%g", value);

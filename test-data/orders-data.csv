@@ -1,4 +1,4 @@
-OrderNumber,OrderDate(dd/mm/yyyy),Order_Customer.CustomerId
+OrderNumber*,OrderDate(dd/mm/yyyy),Order_Customer.CustomerId
 1,12/3/2014 6:39,1
 2,4/12/2014 8:44,2
 3,6/10/2014 4:46,3

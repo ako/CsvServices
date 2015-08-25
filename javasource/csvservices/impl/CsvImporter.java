@@ -36,6 +36,8 @@ public class CsvImporter {
         String[] attributeNames = null;
         String[] attributeFormats = null;
         Format[] attributeFormatters = null;
+        Boolean[] attributeIsPK = null;
+        Boolean entityHasPk = false;
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
@@ -50,34 +52,60 @@ public class CsvImporter {
                 attributeNames = line.split(csvSplitter);
                 attributeFormats = new String[attributeNames.length];
                 attributeFormatters = new Format[attributeNames.length];
+                attributeIsPK = new Boolean[attributeNames.length];
                 for (int i = 0; i < attributeNames.length; i++) {
                     attributeNames[i] = attributeNames[i].trim();
+                    // check if attribute is part of primary key
+                    attributeIsPK[i] = attributeNames[i].endsWith("*");
+                    if (attributeIsPK[i]) {
+                        entityHasPk = true;
+                        attributeNames[i] = attributeNames[i].replace("*", "");
+                    }
+                    // remove double quotes at start and end
                     attributeNames[i] = attributeNames[i].replaceAll("^\"|\"$", "");
+                    // check if has formatting specified
                     if (attributeNames[i].indexOf("(") >= 0) {
                         // format included in braces
                         attributeFormats[i] = attributeNames[i].substring(attributeNames[i].indexOf("(") + 1, attributeNames[i].length() - 1);
                         attributeNames[i] = attributeNames[i].substring(0, attributeNames[i].indexOf("("));
                         attributeFormatters[i] = new SimpleDateFormat(attributeFormats[i]);
                     }
-                    logger.info("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
+                    logger.debug("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
                 }
             } else {
                 IMendixObject object = null;
                 try {
-                    object = Core.instantiate(context, moduleName + "." + entityName);
                     String[] values = line.split(csvSplitter);
+                    String objectConstraint = "";
+                    if (entityHasPk) {
+                        // test if object already exists, get object
+                        for (int i = 0; i < attributeNames.length; i++) {
+                            if (attributeIsPK[i]) {
+                                objectConstraint += "(" + attributeNames[i] + "=" + values[i] + ") and ";
+                            }
+                        }
+                        String findByPkXpath = "//" + moduleName + "." + entityName + "[" + objectConstraint + " (1 = 1)]";
+                        logger.debug("find by pk constraint: " + findByPkXpath);
+                        List<IMendixObject> objects = Core.retrieveXPathQuery(context, findByPkXpath);
+                        if(objects.size() > 0){
+                            object = objects.get(0);
+                        }
+                    }
+                    if (object == null) {
+                        object = Core.instantiate(context, moduleName + "." + entityName);
+                    }
                     for (int i = 0; i < values.length; i++) {
                         values[i] = values[i].trim();
-                        logger.info(String.format("value: %s = %s", attributeNames[i], values[i]));
+                        logger.debug(String.format("value: %s = %s", attributeNames[i], values[i]));
                         /*
                          * check if reference
                          */
                         if (attributeNames[i].contains(".")) {
                             String[] refInfo = attributeNames[i].split("\\.");
-                            logger.info("Assoc: " + refInfo[0]);
+                            logger.debug("Assoc: " + refInfo[0]);
 
                             IMetaAssociation assoc = Core.getMetaAssociation(moduleName + "." + refInfo[0]);
-                            logger.info("Assoc: " + assoc.getName() + ", " + assoc.getParent().getName() + " - " + assoc.getChild().getName());
+                            logger.debug("Assoc: " + assoc.getName() + ", " + assoc.getParent().getName() + " - " + assoc.getChild().getName());
                             /*
                              * check if reference set
                              */
@@ -88,15 +116,15 @@ public class CsvImporter {
                                 // find referenced objects
                                 List<IMendixIdentifier> ids = new ArrayList();
                                 for (int ri = 0; ri < refs.length; ri++) {
-                                    logger.info("ref: " + refs[ri]);
+                                    logger.debug("ref: " + refs[ri]);
                                     String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], refs[ri]);
-                                    logger.info("xpath = " + xpath);
+                                    logger.debug("xpath = " + xpath);
                                     List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
                                     if (refObjectList.size() == 1) {
-                                        logger.info("ref object uuid: " + refObjectList.get(0).getId().toLong());
+                                        logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
                                         ids.add(refObjectList.get(0).getId());
                                     } else {
-                                        logger.info("found more than one object on ref");
+                                        logger.debug("found more than one object on ref");
                                     }
                                 }
                                 // add reference to object
@@ -104,13 +132,13 @@ public class CsvImporter {
                             } else {
                                 // reference
                                 String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
-                                logger.info("reference xpath: " + xpath);
+                                logger.debug("reference xpath: " + xpath);
                                 try {
                                     List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
-                                    logger.info("references obj id: " + refObjectList.get(0).getId().toLong());
+                                    logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
                                     object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
                                 } catch (Exception e) {
-                                    logger.info("Failed to set reference: " + e.getMessage());
+                                    logger.debug("Failed to set reference: " + e.getMessage());
                                 }
                             }
 
@@ -120,7 +148,7 @@ public class CsvImporter {
                              */
                             IMetaPrimitive primitive = object.getMetaObject().getMetaPrimitive(attributeNames[i]);
                             IMetaPrimitive.PrimitiveType type = primitive.getType();
-                            logger.info("attribute type: " + type.name());
+                            logger.debug("attribute type: " + type.name());
                             values[i] = values[i].trim();
                             if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
                                 try {
@@ -145,7 +173,7 @@ public class CsvImporter {
                             }
                         }
                     }
-                    logger.info("commiting object: " + object);
+                    logger.debug("commiting object: " + object);
                     Core.commit(context, object);
                 } catch (CoreException e) {
                     logger.warn("failed to create object: " + object);
