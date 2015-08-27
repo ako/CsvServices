@@ -64,6 +64,14 @@ Notes:
         3,         gi,        Fuli juja.,      19411, [3]
         4,         cas,       Pon duz apkar.,  4596,  [23;2]
         5,         pignadhiz, Hevizkug.,       25041, [1;2;3]
+        
+ * You can specify which columns make up a unique key for the record. You indicate that a columns is part of the unique 
+   key by adding an asteriks (*) after the column name. If you do this, when inserting new objects the module will
+   check if the object already exists. If it does, the existing record will be updated.
+     
+        AddressId*, Street,              City,        County,     State, Zipcode, Country
+        1,          6649 N Blue Gum St,  New Orleans, Orleans,    LA,    70116,   US
+        2,          4 B Blue Ridge Blvd, Brighton,    Livingston, MI,    48116,   US
 
 #### Initializing a Mendix application
  
