@@ -140,14 +140,16 @@ public class CsvImporter {
                                 object.setValue(context, assoc.getName(), ids);
                             } else {
                                 // reference
-                                String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
-                                logger.debug("reference xpath: " + xpath);
-                                try {
-                                    List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
-                                    logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
-                                    object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
-                                } catch (Exception e) {
-                                    logger.debug("Failed to set reference: " + e.getMessage());
+                                if(values[i] != null && !values[i].equals("")) {
+                                    String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
+                                    logger.debug("reference xpath: " + xpath);
+                                    try {
+                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
+                                        logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
+                                        object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
+                                    } catch (Exception e) {
+                                        logger.debug("Failed to set reference: " + e.getMessage());
+                                    }
                                 }
                             }
 
