@@ -1,6 +1,6 @@
 # test data generated on http://www.convertcsv.com/generate-test-data.htm,,,,
 # seq,word,sentence,natural,natural
-ProductId*,Name,Description,Price,Product_Labels.LabelId
+ProductId,Name*,Description,Price,Product_Labels.LabelId
 1,reubo,Pipopwu ric ceh coniriute goezle ke keviufe nireb mitomuk reji cenudub ciocupi.,92468,[57]
 2,hujvi,Kiuci cuguwkus alogagon imi fecat ub jannu muji googe vuw go bacfazo id caiffo ab azeroj gocu giijip.,25801,[4]
 3,gi,Fuli juja fimki fum ziptuh dubtecdug ubi edle jifnemec moluclup cudav wusub si.,19411,[3]

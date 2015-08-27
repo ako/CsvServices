@@ -9,6 +9,7 @@ import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.systemwideinterfaces.core.UserException;
 import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
+import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
 
 import java.io.*;
@@ -81,13 +82,21 @@ public class CsvImporter {
                         // test if object already exists, get object
                         for (int i = 0; i < attributeNames.length; i++) {
                             if (attributeIsPK[i]) {
-                                objectConstraint += "(" + attributeNames[i] + "=" + values[i] + ") and ";
+                                IMetaPrimitive metaPrimitive = Core.getMetaObject(moduleName + "." + entityName).getMetaPrimitive(attributeNames[i]);
+                                IMetaPrimitive.PrimitiveType type = metaPrimitive.getType();
+                                if (type.equals(IMetaPrimitive.PrimitiveType.String)
+                                        || type.equals(IMetaPrimitive.PrimitiveType.HashString)
+                                        || type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
+                                    objectConstraint += "(" + attributeNames[i] + "= '" + values[i] + "') and ";
+                                } else {
+                                    objectConstraint += "(" + attributeNames[i] + "=" + values[i] + ") and ";
+                                }
                             }
                         }
                         String findByPkXpath = "//" + moduleName + "." + entityName + "[" + objectConstraint + " (1 = 1)]";
                         logger.debug("find by pk constraint: " + findByPkXpath);
                         List<IMendixObject> objects = Core.retrieveXPathQuery(context, findByPkXpath);
-                        if(objects.size() > 0){
+                        if (objects.size() > 0) {
                             object = objects.get(0);
                         }
                     }
