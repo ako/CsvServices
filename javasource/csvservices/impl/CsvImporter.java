@@ -18,6 +18,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * Created by ako on 2/10/2015.
@@ -40,9 +41,6 @@ public class CsvImporter {
         Boolean[] attributeIsPK = null;
         Boolean entityHasPk = false;
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
         while ((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("#") || line.length() == 0) {
@@ -86,18 +84,28 @@ public class CsvImporter {
                                 IMetaPrimitive.PrimitiveType type = metaPrimitive.getType();
                                 if (type.equals(IMetaPrimitive.PrimitiveType.String)
                                         || type.equals(IMetaPrimitive.PrimitiveType.HashString)
-                                        || type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
-                                    objectConstraint += "(" + attributeNames[i] + "= '" + values[i] + "') and ";
+                                        ) {
+                                    objectConstraint += "(" + attributeNames[i] + " = '" + values[i] + "') and ";
+                                } else if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
+                                    SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+                                    String internalDateString = dateTimeFormat.format(toDateValue(values[i], attributeFormatters[i]));
+                                    //pkVals.add(internalDateString);
+                                    objectConstraint += "(" + attributeNames[i] + " = '" + internalDateString + "') and ";
                                 } else {
-                                    objectConstraint += "(" + attributeNames[i] + "=" + values[i] + ") and ";
+                                    objectConstraint += "(" + attributeNames[i] + " = " + values[i] + ") and ";
                                 }
                             }
                         }
                         String findByPkXpath = "//" + moduleName + "." + entityName + "[" + objectConstraint + " (1 = 1)]";
                         logger.debug("find by pk constraint: " + findByPkXpath);
-                        List<IMendixObject> objects = Core.retrieveXPathQuery(context, findByPkXpath);
-                        if (objects.size() > 0) {
-                            object = objects.get(0);
+                        try {
+                            List<IMendixObject> objects = Core.retrieveXPathQuery(context, findByPkXpath);
+                            if (objects.size() > 0) {
+                                object = objects.get(0);
+                            }
+                        } catch (Exception e) {
+                            logger.info(e);
+                            logger.warn("Failed to retrieve object by pk");
                         }
                     }
                     if (object == null) {
@@ -140,7 +148,7 @@ public class CsvImporter {
                                 object.setValue(context, assoc.getName(), ids);
                             } else {
                                 // reference
-                                if(values[i] != null && !values[i].equals("")) {
+                                if (values[i] != null && !values[i].equals("")) {
                                     String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
                                     logger.debug("reference xpath: " + xpath);
                                     try {
@@ -162,23 +170,7 @@ public class CsvImporter {
                             logger.debug("attribute type: " + type.name());
                             values[i] = values[i].trim();
                             if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
-                                try {
-                                    if (attributeFormats[i] != null) {
-                                        object.setValue(context, attributeNames[i], attributeFormatters[i].parseObject(values[i].replaceAll("^\"|\"$", "")));
-                                    } else {
-                                        object.setValue(context, attributeNames[i], dateTimeFormat.parse(values[i].replaceAll("^\"|\"$", "")));
-                                    }
-                                } catch (ParseException e) {
-                                    try {
-                                        object.setValue(context, attributeNames[i], dateFormat.parse(values[i].replaceAll("^\"|\"$", "")));
-                                    } catch (ParseException e1) {
-                                        try {
-                                            object.setValue(context, attributeNames[i], dateFormat2.parse(values[i].replaceAll("^\"|\"$", "")));
-                                        } catch (ParseException e2) {
-                                            logger.warn("failed to parse date: " + values[i]);
-                                        }
-                                    }
-                                }
+                                object.setValue(context, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
                             } else {
                                 object.setValue(context, attributeNames[i], values[i].replaceAll("^\"|\"$", ""));
                             }
@@ -197,6 +189,31 @@ public class CsvImporter {
             lineNo++;
         }
         logger.info("objects created: " + lineNo);
+    }
+
+    private Object toDateValue(String value, Format attributeFormatter) {
+        Object val = null;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            if (attributeFormatter != null) {
+                val = attributeFormatter.parseObject(value.replaceAll("^\"|\"$", ""));
+            } else {
+                val = dateTimeFormat.parse(value.replaceAll("^\"|\"$", ""));
+            }
+        } catch (ParseException e) {
+            try {
+                val = dateFormat.parse(value.replaceAll("^\"|\"$", ""));
+            } catch (ParseException e1) {
+                try {
+                    val = dateFormat2.parse(value.replaceAll("^\"|\"$", ""));
+                } catch (ParseException e2) {
+                    logger.warn("failed to parse date: " + value);
+                }
+            }
+        }
+        return val;
     }
 
 }

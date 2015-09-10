@@ -24,9 +24,12 @@ import java.net.URL;
  */
 public class CsvExportInitializeAction extends CustomJavaAction<Boolean>
 {
-	public CsvExportInitializeAction(IContext context)
+	private String RequiredUserRole;
+
+	public CsvExportInitializeAction(IContext context, String RequiredUserRole)
 	{
 		super(context);
+		this.RequiredUserRole = RequiredUserRole;
 	}
 
 	@Override
@@ -36,9 +39,9 @@ public class CsvExportInitializeAction extends CustomJavaAction<Boolean>
         boolean isSandbox = Core.getConfiguration().getApplicationRootUrl().contains(".mendixcloud.com") && "DEVELOPMENT".equalsIgnoreCase(Core.getConfiguration().getDTAPMode().toString());
         isSandbox = true;
         if (isSandbox) {
-            startSandboxCompatibilityMode(this.getContext());
+            startSandboxCompatibilityMode(this.getContext(), this.RequiredUserRole);
         } else {
-            Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(this.getContext()));
+            Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(this.getContext(),this.RequiredUserRole));
         }
         return true;
 		// END USER CODE
@@ -56,9 +59,10 @@ public class CsvExportInitializeAction extends CustomJavaAction<Boolean>
 	// BEGIN EXTRA CODE
     private static ILogNode logger = Core.getLogger(CsvExportInitializeAction.class.getName());
 
-    private static void startSandboxCompatibilityMode(IContext context) {
+    private static void startSandboxCompatibilityMode(IContext context, String requiredRole) {
         CsvRestHandler.serviceRoot = "ws-doc/";
         final IContext ctx = context;
+        final String requiredUserRole = requiredRole;
         new Thread() {
             @Override
             public void run() {
@@ -86,7 +90,7 @@ public class CsvExportInitializeAction extends CustomJavaAction<Boolean>
                         break;
                     }
                 }
-                Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(ctx));
+                Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(ctx, requiredUserRole));
             }
         }.start();
     }

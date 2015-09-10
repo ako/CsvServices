@@ -21,10 +21,12 @@ public class CsvRestHandler extends RequestHandler {
     public static String serviceRoot = "csv/";
     private static ILogNode logger = Core.getLogger(CsvRestHandler.class.getName());
     private final IContext context;
+    private final String requiredUserRole;
 
-    public CsvRestHandler(IContext context) {
+    public CsvRestHandler(IContext context, String requiredUserRole) {
         logger.info("CsvRestHandler");
         this.context = context;
+        this.requiredUserRole = requiredUserRole;
     }
 
     @Override
@@ -106,7 +108,20 @@ public class CsvRestHandler extends RequestHandler {
         if (username != null) {
             try {
                 session = Core.login(username, password);
-                context = session.createContext();
+                boolean hasCsvRole = true;
+                if (this.requiredUserRole != null) {
+                    logger.info("Checking user has role: " + this.requiredUserRole);
+                    hasCsvRole = session.getUserRolesNames().contains(this.requiredUserRole);
+                    //logger.info("user role names: " + session.getUserRolesNames().toString());
+                    //logger.info("grantable role names: " + session.getGrantableRoleNames().toString());
+                }
+                if (hasCsvRole) {
+                    context = session.createContext();
+                } else {
+                    // user doesn't have appropriate role, logout
+                    logger.info("User misses role csv_services_user");
+                    Core.logout(session);
+                }
             } catch (Exception e) {
             }
         }

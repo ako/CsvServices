@@ -25,7 +25,7 @@ Retrieve all records in ProductLabels:
 To install:
 
  1. Import the module into your project.
- 2. Configure your project to call MF_StartCsvServices in the after startup.
+ 2. Configure your project to call MF_StartCsvServices in the after startup. You can provide a user_role name when calling the MF_StartCsvServices microflow. All calls to the csv services endpoints will be validated to have this user role.
 
 Notes:
 
@@ -93,6 +93,14 @@ The test-data folder contains an example for the Orders module, load-data.sh:
 Use the GET operation to export all objects of an entity:
 
     curl -v -X GET http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels
+    
+### Security
+
+When enabling this module, endpoints are available for *all* entities in your application. 
+
+To avoid misuse, all calls to the csv services endpoints need to be authenticated. Currently only basic-authentication is implemented.
+
+Optionally you can provide a user role name when calling the startup microflow. Accounts will need to have this role.
 
 #### Reporting with R
 
