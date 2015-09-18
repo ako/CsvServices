@@ -98,7 +98,7 @@ Use the GET operation to export all objects of an entity:
 
 When enabling this module, endpoints are available for *all* entities in your application. 
 
-To avoid misuse, all calls to the csv services endpoints need to be authenticated. Currently only basic-authentication is implemented.
+To avoid misuse, all calls to the csv services endpoints need to be authenticated if not running in development mode. Currently only basic-authentication is implemented.
 
 Optionally you can provide a user role name when calling the startup microflow. Accounts will need to have this role.
 
@@ -116,3 +116,9 @@ An example how you can load data from Mendix into R:
 ### Tips
 
 * It helps if you create a public key attribute for every entity, which can be used in associations. For example, the Orders entity has a OrderId attribute.
+
+### Todo
+
+* Add configuration to specify which modules/entities should have csv endpoints
+* Enable use of /csv path in sandboxes
+ 
