@@ -34,10 +34,12 @@ public class CsvRestHandler extends RequestHandler {
         /*
          * Validate credentials
          */
-        IContext context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
-        if (context == null) {
-            iMxRuntimeResponse.setStatus(401);
-            return;
+        if(!Core.getConfiguration().isInDevelopment()) {
+            IContext context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
+            if (context == null) {
+                iMxRuntimeResponse.setStatus(401);
+                return;
+            }
         }
         /*
          * get path
@@ -112,6 +114,7 @@ public class CsvRestHandler extends RequestHandler {
                 if (this.requiredUserRole != null) {
                     logger.info("Checking user has role: " + this.requiredUserRole);
                     hasCsvRole = session.getUserRolesNames().contains(this.requiredUserRole);
+
                     //logger.info("user role names: " + session.getUserRolesNames().toString());
                     //logger.info("grantable role names: " + session.getGrantableRoleNames().toString());
                 }
