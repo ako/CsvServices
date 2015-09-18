@@ -34,12 +34,17 @@ public class CsvRestHandler extends RequestHandler {
         /*
          * Validate credentials
          */
-        if(!Core.getConfiguration().isInDevelopment()) {
-            IContext context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
+        IContext context = null;
+        if (!Core.getConfiguration().isInDevelopment()) {
+            logger.info("Not running in development, checking username password");
+            context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
             if (context == null) {
                 iMxRuntimeResponse.setStatus(401);
                 return;
             }
+        } else {
+            logger.info("Running in development, skipping username password validation.");
+            context = Core.createSystemContext();
         }
         /*
          * get path
@@ -83,7 +88,9 @@ public class CsvRestHandler extends RequestHandler {
         /*
          * Finish session
          */
-        Core.logout(context.getSession());
+        if (!context.getSession().isSystemSession()) {
+            Core.logout(context.getSession());
+        }
     }
 
 

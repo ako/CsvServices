@@ -109,7 +109,12 @@ public class CsvImporter {
                         }
                     }
                     if (object == null) {
-                        object = Core.instantiate(context, moduleName + "." + entityName);
+                        try {
+                            object = Core.instantiate(context, moduleName + "." + entityName);
+                        }catch(Exception e){
+                            logger.info(e);
+                            logger.warn("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
+                        }
                     }
                     for (int i = 0; i < values.length; i++) {
                         values[i] = values[i].trim();
@@ -179,10 +184,13 @@ public class CsvImporter {
                     logger.debug("commiting object: " + object);
                     Core.commit(context, object);
                 } catch (CoreException e) {
+                    logger.warn(e);
                     logger.warn("failed to create object: " + object);
                 } catch (UserException e2) {
+                    logger.warn(e2);
                     logger.warn("failed to create object: " + e2.getMessage());
                 } catch (MendixRuntimeException e3) {
+                    logger.warn(e3);
                     logger.warn("failed to create object: " + e3.getMessage());
                 }
             }

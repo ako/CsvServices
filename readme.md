@@ -102,7 +102,17 @@ To avoid misuse, all calls to the csv services endpoints need to be authenticate
 
 Optionally you can provide a user role name when calling the startup microflow. Accounts will need to have this role.
 
-#### Reporting with R
+### Using Powershell on Windows
+
+If you are on Windows and working with Powershell, instead of install curl, you can do the following:
+
+    Invoke-WebRequest -Method Post 
+      -Headers @{"Authorization" = "Basic "+[System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("MxAdmin:1"))} 
+      -ContentType text/csv
+      -InFile .\labels-data.csv  
+      "http://localhost:8080/ws-doc/Orders/ProductLabels" 
+      
+### Reporting with R
 
 You can easily use live Mendix data in R or Rstudio using the csv services module.
 
