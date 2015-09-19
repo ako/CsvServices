@@ -15,11 +15,12 @@ public class Microflows
 {
 	// These are the microflows for the CsvServices module
 
-	public static boolean mF_StartCsvServices(IContext context)
+	public static boolean mF_StartCsvServices(IContext context, String _user_Role)
 	{
 		try
 		{
 			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("User_Role", _user_Role);
 			return (Boolean)Core.execute(context, "CsvServices.MF_StartCsvServices", params);
 		}
 		catch (CoreException e)
