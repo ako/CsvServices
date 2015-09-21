@@ -19,24 +19,6 @@ Consider the following domain model. I have a csv file containing product labels
 
 ![Domain model][3]
 
-After you include the CsvServices module from the AppStore into your project, and initialize the module in the application startup microflow, you can load your csv file with one command into your running application:
-
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
-
-[Curl][4] is an opensource tool available for both windows and linux that functions as a command line browser. It enables you to interact with REST APIs from the command line. You need to install it, and run it from a shell or dos prompt.
-
-This command **posts** the file **labels-data.csv** to the url **http://localhost:8080/ws-doc/Orders/ProductLabels** using the username MxAdmin and the password 1. It also tell the API that it is sending a csv document.
-
-Intead of curl you can also use wget, and on windows you can use Invoke-WebRequest in powershell:
-
-    Invoke-WebRequest -Method Post 
-      -Headers @{"Authorization" = "Basic "+[System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("MxAdmin:1"))} 
-      -ContentType text/csv
-      -InFile .\labels-data.csv  
-      "http://localhost:8080/ws-doc/Orders/ProductLabels" 
-
-The CsvServices module creates an API like this for every entity in your project: http://\<servername\>:\<port\>/ws-doc/\<module_name\>/\<entity_name\>. The path ws-doc is used to enable this on sandboxes.
-
 The labels-data.csv file looks like this:
 
     LabelId*, Label
@@ -45,10 +27,27 @@ The labels-data.csv file looks like this:
     3,        vudef
     4,        waz
     5,        lokavhal
-
 The first line has the attribute names of the entity, followed by one line per record. The star behind the LabelId name indicates that it should be considered a unique key for the object. When inserting objects, CsvServices will try to replace objects with the same unique key with the data from your csv.
 
 The labels in this example are a bit odd, as they have been randomly generated using the [convertcsv.com][6] website. There are more websites like this, some will also create valid address information, if you need data to display on a map. Ofcourse, if you like, you can also use Excel to populate your csv with data.
+
+After you include the CsvServices module from the AppStore into your project, and initialize the module in the application startup microflow, you can load your csv file with one command into your running application:
+
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
+
+[Curl][4] is an opensource tool available for both windows and linux that functions as a command line browser. It enables you to interact with REST APIs from the command line. You need to install it, and run it from a shell or dos prompt.
+
+This command **posts** the file **labels-data.csv** to the url **http://localhost:8080/ws-doc/Orders/ProductLabels** using the username MxAdmin and the password 1. It also tell the API that it is sending a csv document.
+
+Instead of curl you can also use wget, and on windows you can use Invoke-WebRequest in powershell:
+
+    Invoke-WebRequest -Method Post 
+      -Headers @{"Authorization" = "Basic "+[System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("MxAdmin:1"))} 
+      -ContentType text/csv
+      -InFile .\labels-data.csv  
+      "http://localhost:8080/ws-doc/Orders/ProductLabels" 
+
+The CsvServices module creates an API like this for every entity in your project: http://\<servername\>:\<port\>/ws-doc/\<module_name\>/\<entity_name\>. The path ws-doc is used to enable this on sandboxes.
 
 ## Downloading data from a running mendix application
 
@@ -74,6 +73,8 @@ To load the data for both Product Labels and Products you can execute the follow
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Products --data-binary "@products-data.csv"
 
 As you can see, it's fairly straightforward to create a script that will populate a number of entites. Very useful for demos or tests. More info can be found in the [readme][5] or in the source code on GitHub: [CsvServices][2].
+
+Please note that this is a community supported opensource effort, and has mainly be used for test and demo purposes. This means that it has not been tested with very large datasets. Please validate that it works as expected before deploying to production. Feedback and improvements are very much appreciated.
 
   [1]: https://appstore.home.mendix.com/link/app/1911/Mendix/CsvServices
   [2]: https://github.com/ako/CsvServices
