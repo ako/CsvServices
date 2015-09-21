@@ -74,7 +74,7 @@ To load the data for both Product Labels and Products you can execute the follow
 
 As you can see, it's fairly straightforward to create a script that will populate a number of entites. Very useful for demos or tests. More info can be found in the [readme][5] or in the source code on GitHub: [CsvServices][2].
 
-Please note that this is a community supported opensource effort, and has mainly be used for test and demo purposes. This means that it has not been tested with very large datasets. Please validate that it works as expected before deploying to production. Feedback and improvements are very much appreciated.
+Please note that this is a community supported opensource effort, and has mainly been used for test and demo purposes. This means that it has not been tested with very large datasets. Please validate that it works as expected before deploying to production. Feedback and improvements are very much appreciated.
 
   [1]: https://appstore.home.mendix.com/link/app/1911/Mendix/CsvServices
   [2]: https://github.com/ako/CsvServices
