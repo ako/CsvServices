@@ -88,6 +88,16 @@ The test-data folder contains an example for the Orders module, load-data.sh:
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Orders --data-binary "@orders-data.csv"
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/OrderLines --data-binary "@orderlines-data.csv"
 
+#### Bulk import
+
+To speed up import you copy values straight inito the database (postgres specific!).
+
+Specify http header UseSQL set to true to enable this feature.
+
+Only use this on a database with no users.
+
+    curl -v -X POST -H "Content-Type: text/csv" -H "UseSQL: true" http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels --data-binary "@labels-data.csv"
+
 ### Export CSV
 
 Use the GET operation to export all objects of an entity:
@@ -130,5 +140,9 @@ An example how you can load data from Mendix into R:
 ### Todo
 
 * Add configuration to specify which modules/entities should have csv endpoints
-* Enable use of /csv path in sandboxes
- 
+
+### Changelog
+
+  * 1.1.4
+  
+    * Removed need for sandbox workaround for url path, enabled use of /csv path in sandboxes

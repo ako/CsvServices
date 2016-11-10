@@ -35,7 +35,7 @@ public class CsvRestHandler extends RequestHandler {
          * Validate credentials
          */
         IContext context = null;
-        if (!Core.getConfiguration().isInDevelopment()) {
+        if (!Core.getConfiguration().isInDevelopment() && !Core.getConfiguration().getApplicationRootUrl().contains(".mxapps.io") ) {
             logger.info("Not running in development, checking username password");
             context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
             if (context == null) {
@@ -62,8 +62,13 @@ public class CsvRestHandler extends RequestHandler {
         logger.debug("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
         if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("POST")) {
             // inserting new objects
-            CsvImporter importer = new CsvImporter();
-            importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
+            if(iMxRuntimeRequest.getHttpServletRequest().getHeader("UseSQL").equalsIgnoreCase("true")){
+                CsvImporterSql importer = new CsvImporterSql();
+                importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
+            }else {
+                CsvImporter importer = new CsvImporter();
+                importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
+            }
         } else if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("GET")) {
             /*
              * retrieve all objects from entities, return as csv (comma separated values)

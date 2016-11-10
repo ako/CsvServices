@@ -4,6 +4,8 @@ curl -v -X GET http://MxAdmin:Welcome1!@localhost:8080/csv/Orders/Products
 curl -v -X GET http://MxAdmin:Welcome1!@localhost:8080/csv/Orders/ProductLabels
 curl -v -X GET https://demo_user:sQIGwSVv83@orderapp101.mendixcloud.com/ws-doc/Orders/ProductLabels
 
+curl -v -X POST -H "Content-Type: text/csv" -H "UseSQL: true" http://MxAdmin:Welcome1!@localhost:8080/csv/Orders/ProductLabels --data-binary "@labels-data.csv"
+
 curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:Welcome1!@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
 curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:Welcome1!@localhost:8080/ws-doc/Orders/Customers --data-binary "@customers-data.csv"
 curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:Welcome1!@localhost:8080/ws-doc/Orders/Products --data-binary "@products-data.csv"

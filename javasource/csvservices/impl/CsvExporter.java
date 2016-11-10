@@ -2,9 +2,9 @@ package csvservices.impl;
 
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
-import com.mendix.core.objectmanagement.MendixIdentifier;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
+import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.systemwideinterfaces.core.IMendixObjectMember;
 
@@ -98,14 +98,14 @@ public class CsvExporter {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
                 csvValue = dateFormat.format(value);
             } else if (value.getClass().equals(String.class)) {
-                csvValue = String.format("\"%s\"", value);
+                csvValue = String.format("\"%s\"", ((String)value).replace("\"","\"\""));
             } else if (value.getClass().equals(ArrayList.class)) {
                 csvValue = "";
                 logger.debug("arrayList.size: " + ((ArrayList) value).size());
                 ListIterator iter = ((ArrayList) value).listIterator();
                 String arrayPrefix = "";
                 while (iter.hasNext()) {
-                    MendixIdentifier o = (MendixIdentifier) iter.next();
+                    IMendixIdentifier o = (IMendixIdentifier) iter.next();
                     logger.debug(" - arraylist: " + o);
                     csvValue += arrayPrefix + o.toLong();
                     arrayPrefix = ";";
@@ -116,9 +116,9 @@ public class CsvExporter {
                     ) {
                 logger.debug("int/long = " + value);
                 csvValue = String.format("%d", value);
-            } else if (value.getClass().equals(MendixIdentifier.class)) {
-                logger.debug("mxid: " + ((MendixIdentifier) value).toLong());
-                csvValue = String.format("%d", ((MendixIdentifier) value).toLong());
+            } else if (value.getClass().equals(IMendixIdentifier.class)) {
+                logger.debug("mxid: " + ((IMendixIdentifier) value).toLong());
+                csvValue = String.format("%d", ((IMendixIdentifier) value).toLong());
             } else if (value.getClass().equals(Boolean.class)) {
                 logger.debug("boolean = " + value);
                 csvValue = String.format("%b", value);

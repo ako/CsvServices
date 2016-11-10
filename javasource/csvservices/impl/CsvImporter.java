@@ -9,8 +9,8 @@ import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.systemwideinterfaces.core.UserException;
 import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
-import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
+import com.mendix.thirdparty.org.json.JSONObject;
 
 import java.io.*;
 import java.text.Format;
@@ -18,7 +18,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 /**
  * Created by ako on 2/10/2015.
@@ -40,7 +39,7 @@ public class CsvImporter {
         Format[] attributeFormatters = null;
         Boolean[] attributeIsPK = null;
         Boolean entityHasPk = false;
-
+        ArrayList<String> errorMessages = new ArrayList<String>();
 
         while ((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("#") || line.length() == 0) {
@@ -111,9 +110,10 @@ public class CsvImporter {
                     if (object == null) {
                         try {
                             object = Core.instantiate(context, moduleName + "." + entityName);
-                        }catch(Exception e){
+                        } catch (Exception e) {
                             logger.info(e);
                             logger.warn("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
+                            errorMessages.add("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
                         }
                     }
                     for (int i = 0; i < values.length; i++) {
@@ -147,6 +147,7 @@ public class CsvImporter {
                                         ids.add(refObjectList.get(0).getId());
                                     } else {
                                         logger.debug("found more than one object on ref");
+                                        errorMessages.add("found more than one object on ref");
                                     }
                                 }
                                 // add reference to object
@@ -162,6 +163,7 @@ public class CsvImporter {
                                         object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
                                     } catch (Exception e) {
                                         logger.debug("Failed to set reference: " + e.getMessage());
+                                        errorMessages.add("Failed to set reference: " + e.getMessage());
                                     }
                                 }
                             }
@@ -170,8 +172,15 @@ public class CsvImporter {
                             /*
                              * set attribute value
                              */
-                            IMetaPrimitive primitive = object.getMetaObject().getMetaPrimitive(attributeNames[i]);
-                            IMetaPrimitive.PrimitiveType type = primitive.getType();
+                            IMetaPrimitive.PrimitiveType type = null;
+                            try {
+                                IMetaPrimitive primitive = null;
+                                primitive = object.getMetaObject().getMetaPrimitive(attributeNames[i]);
+                                type = primitive.getType();
+                            } catch (Exception e) {
+                                logger.error("Failed to get primitive for attribute: " + attributeNames[i]);
+                                type = IMetaPrimitive.PrimitiveType.String;
+                            }
                             logger.debug("attribute type: " + type.name());
                             values[i] = values[i].trim();
                             if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
@@ -186,17 +195,29 @@ public class CsvImporter {
                 } catch (CoreException e) {
                     logger.warn(e);
                     logger.warn("failed to create object: " + object);
+                    errorMessages.add("failed to create object: " + object);
                 } catch (UserException e2) {
                     logger.warn(e2);
                     logger.warn("failed to create object: " + e2.getMessage());
+                    errorMessages.add("failed to create object: " + object);
                 } catch (MendixRuntimeException e3) {
                     logger.warn(e3);
                     logger.warn("failed to create object: " + e3.getMessage());
+                    errorMessages.add("failed to create object: " + object);
                 }
             }
             lineNo++;
         }
         logger.info("objects created: " + lineNo);
+        JSONObject response = new JSONObject();
+        response.put("lines_processed", lineNo);
+        if (errorMessages.size() == 0) {
+            response.put("status", "successfully created objects");
+        } else {
+            response.put("status", "successfully created objects");
+            response.put("errors", errorMessages.toArray());
+        }
+        writer.write(response.toString());
     }
 
     private Object toDateValue(String value, Format attributeFormatter) {
