@@ -87,16 +87,17 @@ The test-data folder contains an example for the Orders module, load-data.sh:
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Orders --data-binary "@orders-data.csv"
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/OrderLines --data-binary "@orderlines-data.csv"
 
-#### Bulk import
+### Import CSV data using Microflow actions
 
-To speed up import you copy values straight inito the database (postgres specific!).
+As of version 1.2 you can also import csv data from microflow actions. You can provide the entire csv document as a string parameter to the 
+import csv data action:
 
-Specify http header UseSQL set to true to enable this feature.
+ ![Import csv data microflow action][1]
+ 
+Just provide the entire csv file in the string parameter:
 
-Only use this on a database with no users.
-
-    curl -v -X POST -H "Content-Type: text/csv" -H "UseSQL: true" http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels --data-binary "@labels-data.csv"
-
+ ![Import csv data configuration][2]
+ 
 ### Export CSV
 
 Use the GET operation to export all objects of an entity:
@@ -142,6 +143,11 @@ An example how you can load data from Mendix into R:
 
 ### Changelog
 
-  * 1.1.4
+  * 1.2
   
     * Removed need for sandbox workaround for url path, enabled use of /csv path in sandboxes
+    * Added import csv data microflow action
+    * Upgrade to Mendix 7
+    
+ [1]: docs/csv-import-mf-action.png
+ [2]: docs/csv-import-mf-action-usage.png
