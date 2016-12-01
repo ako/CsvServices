@@ -10,14 +10,9 @@
 package csvservices.actions;
 
 import com.mendix.core.Core;
-import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvRestHandler;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 
 public class CsvExportInitializeAction extends CustomJavaAction<java.lang.Boolean>
 {
@@ -33,7 +28,7 @@ public class CsvExportInitializeAction extends CustomJavaAction<java.lang.Boolea
 	public java.lang.Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-        Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(this.getContext(),this.RequiredUserRole));
+        Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(this.getContext(), this.RequiredUserRole));
         return true;
 		// END USER CODE
 	}

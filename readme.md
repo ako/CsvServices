@@ -14,11 +14,11 @@ There are a number of website that will generate random data in csv format, incl
 
 Load csv records into the ProductLabels entity:
 
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels --data-binary "@labels-data.csv"
 
 Retrieve all records in ProductLabels:
 
-    curl -v -X GET http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels
+    curl -v -X GET http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels
 
 ## Installation
 
@@ -30,7 +30,6 @@ To install:
 Notes:
 
  1. Currently you need to provide a username and password when calling a csv services endpoint. Anonymous usage is not supported.
- 2. The ws-doc endpoint is reused to make it work in sandboxes. This means it is not compatible with the Rest services module. This restriction will be removed in the near future.
  
 ## Usage
 
@@ -38,7 +37,7 @@ Notes:
 
 Use the POST operation to create new objects of an entity:
 
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels --data-binary "@labels-data.csv"
 
 Notes:
 
@@ -79,14 +78,14 @@ Using curl you can create scripts to initialize your Mendix application without 
 
 The test-data folder contains an example for the Orders module, load-data.sh:
 
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels --data-binary "@labels-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Products --data-binary "@products-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Address --data-binary "@address-2-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Address --data-binary "@address-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Address --data-binary "@addresses-uk-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Customers --data-binary "@customers-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/Orders --data-binary "@orders-data.csv"
-    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/ws-doc/Orders/OrderLines --data-binary "@orderlines-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels --data-binary "@labels-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Products --data-binary "@products-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Address --data-binary "@address-2-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Address --data-binary "@address-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Address --data-binary "@addresses-uk-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Customers --data-binary "@customers-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Orders --data-binary "@orders-data.csv"
+    curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/OrderLines --data-binary "@orderlines-data.csv"
 
 #### Bulk import
 
@@ -102,7 +101,7 @@ Only use this on a database with no users.
 
 Use the GET operation to export all objects of an entity:
 
-    curl -v -X GET http://MxAdmin:1@localhost:8080/ws-doc/Orders/ProductLabels
+    curl -v -X GET http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels
     
 ### Security
 
@@ -120,7 +119,7 @@ If you are on Windows and working with Powershell, instead of install curl, you 
       -Headers @{"Authorization" = "Basic "+[System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("MxAdmin:1"))} 
       -ContentType text/csv
       -InFile .\labels-data.csv  
-      "http://localhost:8080/ws-doc/Orders/ProductLabels" 
+      "http://localhost:8080/csv/Orders/ProductLabels" 
       
 ### Reporting with R
 
@@ -130,7 +129,7 @@ An example how you can load data from Mendix into R:
 
     require(httr)
     secret <- RCurl::base64(paste('MxAdmin', '1', sep = ":"));
-    req1 <- GET("http://localhost:8080/ws-doc/Orders/Orders",config(httpheader = c("Authorization" = paste("Basic",secret))))
+    req1 <- GET("http://localhost:8080/csv/Orders/Orders",config(httpheader = c("Authorization" = paste("Basic",secret))))
     orders <- content(req1)
 
 ### Tips
