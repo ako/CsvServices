@@ -14,6 +14,7 @@ public class UserActionsRegistrar
     registrator.bundleComponentLoaded();
     registrator.registerUserAction(csvservices.actions.CsvExportInitializeAction.class);
     registrator.registerUserAction(csvservices.actions.ImportCsvData.class);
+    registrator.registerUserAction(csvservices.actions.ImportCsvResourceData.class);
     registrator.registerUserAction(system.actions.VerifyPassword.class);
   }
 }

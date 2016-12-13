@@ -98,6 +98,14 @@ Just provide the entire csv file in the string parameter:
 
  ![Import csv data configuration][2]
  
+Alternatively you can read the csv file from your resources folder:
+
+ ![Import csv resource microflow action][3]
+ 
+Configuration, specify name of your file, placed in the resources folder:
+
+ ![Import csv resource configuration][4]
+ 
 ### Export CSV
 
 Use the GET operation to export all objects of an entity:
@@ -146,8 +154,10 @@ An example how you can load data from Mendix into R:
   * 1.2
   
     * Removed need for sandbox workaround for url path, enabled use of /csv path in sandboxes
-    * Added import csv data microflow action
+    * Added import csv data microflow actions
     * Upgrade to Mendix 7
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
+ [3]: docs/csv-import-resource-mf-action.png
+ [4]: docs/csv-import-resource-configuration.png

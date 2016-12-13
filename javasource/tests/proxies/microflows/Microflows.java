@@ -26,4 +26,16 @@ public class Microflows
 			throw new MendixRuntimeException(e);
 		}
 	}
+	public static void importCsvResource(IContext context)
+	{
+		try
+		{
+			Map<java.lang.String, Object> params = new HashMap<java.lang.String, Object>();
+			Core.execute(context, "Tests.ImportCsvResource", params);
+		}
+		catch (CoreException e)
+		{
+			throw new MendixRuntimeException(e);
+		}
+	}
 }
