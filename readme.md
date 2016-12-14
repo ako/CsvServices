@@ -100,11 +100,8 @@ Just provide the entire csv file in the string parameter:
  
 Alternatively you can read the csv file from your resources folder:
 
- ![Import csv resource microflow action][3]
+ ![Import csv resource microflow action][5]
  
-Configuration, specify name of your file, placed in the resources folder:
-
- ![Import csv resource configuration][4]
  
 ### Export CSV
 
@@ -161,3 +158,4 @@ An example how you can load data from Mendix into R:
  [2]: docs/csv-import-mf-action-usage.png
  [3]: docs/csv-import-resource-mf-action.png
  [4]: docs/csv-import-resource-configuration.png
+ [5]: docs/csv-import-resource-model.png
