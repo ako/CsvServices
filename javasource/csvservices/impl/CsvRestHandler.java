@@ -62,7 +62,8 @@ public class CsvRestHandler extends RequestHandler {
         logger.debug("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
         if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("POST")) {
             // inserting new objects
-            if(iMxRuntimeRequest.getHttpServletRequest().getHeader("UseSQL").equalsIgnoreCase("true")){
+            if(iMxRuntimeRequest.getHttpServletRequest().getHeader("UseSQL") != null &&
+                    iMxRuntimeRequest.getHttpServletRequest().getHeader("UseSQL").equalsIgnoreCase("true")){
                 CsvImporterSql importer = new CsvImporterSql();
                 importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
             }else {

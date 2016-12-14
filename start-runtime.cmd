@@ -4,11 +4,11 @@ set NETCAT_PATH=c:\programs\netcat\
 set JAVA_PATH=C:\Program Files\Java\jdk1.8.0_92\bin
 set APP_PATH=C:\Users\ako\Dropbox (Mendix)\Projects\mendix\CsvServices
 set APP_PATH_UX=C:/Users/ako/Dropbox (Mendix)/Projects/mendix/CsvServices
-set MX_INSTALL_PATH=C:\Program Files\Mendix\7-build13078
-set MX_INSTALL_PATH_UX=C:/Program Files/Mendix/7-build13078
+set MX_INSTALL_PATH=C:\Program Files\Mendix\7.0.0-rc1
+set MX_INSTALL_PATH_UX=C:/Program Files/Mendix/7.0.0-rc1
 set M2EE_ADMIN_PASS=1
 set M2EE_ADMIN_PORT=8090
-set M2EE_RUNTIME_PORT=8000
+set M2EE_RUNTIME_PORT=8080
 set APP_LOG_PATH=\temp\app.log
 set APP_LOG_PATH_UX=/temp/app.log
 
@@ -16,10 +16,14 @@ rem
 rem start mendix runtime launcher
 rem
 
-start /b "runtime" "%JAVA_PATH%\java.exe" -Djava.net.preferIPv4Stack=true ^
-  -DMX_LOG_LEVEL=INFO -Djava.library.path="%MX_INSTALL_PATH%/runtime/lib/x64;%APP_PATH%/deployment/model/lib/userlib" ^
-  -Dfile.encoding=UTF-8 -Djava.io.tmpdir="%APP_PATH%/deployment/data/tmp" -Djava.security.manager ^
-  -Djava.security.policy=="%APP_PATH%\deployment\data\.policy" ^
+REM start /b "runtime" "%JAVA_PATH%\java.exe" -Djava.net.preferIPv4Stack=true ^
+REM  -DMX_LOG_LEVEL=INFO -Djava.library.path="%MX_INSTALL_PATH%/runtime/lib/x64;%APP_PATH%/deployment/model/lib/userlib" ^
+REM  -Dfile.encoding=UTF-8 -Djava.io.tmpdir="%APP_PATH%/deployment/data/tmp" -Djava.security.manager ^
+REM  -Djava.security.policy=="%APP_PATH%\deployment\data\.policy" ^
+REM  -jar "%MX_INSTALL_PATH%\runtime\launcher\runtimelauncher.jar" "%APP_PATH%\deployment"
+
+start /b "runtime" "%JAVA_PATH%\java.exe"  ^
+  -DMX_LOG_LEVEL=INFO ^
   -jar "%MX_INSTALL_PATH%\runtime\launcher\runtimelauncher.jar" "%APP_PATH%\deployment"
 
 sleep 5
