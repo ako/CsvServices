@@ -7,10 +7,10 @@ set APP_PATH_UX=C:/Users/ako/Dropbox (Mendix)/Projects/mendix/CsvServices
 set MX_INSTALL_PATH=C:\Program Files\Mendix\7.0.0-rc1
 set MX_INSTALL_PATH_UX=C:/Program Files/Mendix/7.0.0-rc1
 set M2EE_ADMIN_PASS=1
-set M2EE_ADMIN_PORT=8090
-set M2EE_RUNTIME_PORT=8080
-set APP_LOG_PATH=\temp\app.log
-set APP_LOG_PATH_UX=/temp/app.log
+set M2EE_ADMIN_PORT=8093
+set M2EE_RUNTIME_PORT=8083
+set APP_LOG_PATH=\temp\app-2.log
+set APP_LOG_PATH_UX=/temp/app-2.log
 
 rem
 rem start mendix runtime launcher

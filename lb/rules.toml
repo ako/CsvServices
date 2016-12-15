@@ -1,0 +1,15 @@
+[backends]
+  [backends.backend1]
+    [backends.backend1.servers.server1]
+       url = "http://localhost:8082"
+     weight = 10
+    [backends.backend1.servers.server2]
+       url = "http://localhost:8083"
+     weight = 10
+
+[frontends]
+  [frontends.frontend1]
+  backend = "backend1"
+  entrypoints = ["http"]
+     [frontends.frontend1.routes.test_1]
+     rule = "Host: localhost"
