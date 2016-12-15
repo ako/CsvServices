@@ -7,5 +7,5 @@ curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/
 curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/Address --data-binary "@address-data.csv"
 curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/Address --data-binary "@address-uk-data.csv"
 curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/Customers --data-binary "@customers-data.csv"
-curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/Orders --data-binary "@orders-data.csv"
-curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/OrderLines --data-binary "@orderlines-data.csv"
+rem curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/Orders --data-binary "@orders-data.csv"
+rem curl -v -X POST -H "Content-Type: text/csv" http://%USR_PWD%@localhost:8080/csv/Orders/OrderLines --data-binary "@orderlines-data.csv"

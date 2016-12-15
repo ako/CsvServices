@@ -34,6 +34,7 @@ public class CsvRestHandler extends RequestHandler {
         /*
          * Validate credentials
          */
+
         IContext context = null;
         if (!Core.getConfiguration().isInDevelopment() && !Core.getConfiguration().getApplicationRootUrl().contains(".mxapps.io") ) {
             logger.info("Not running in development, checking username password");
@@ -55,10 +56,11 @@ public class CsvRestHandler extends RequestHandler {
         for (int i = 0; i < path.length; i++) {
             logger.debug("path, " + i + " " + path[i]);
         }
-        Writer writer = iMxRuntimeResponse.getWriter();
+
         /*
          * save all objects
          */
+        Writer writer = iMxRuntimeResponse.getWriter();
         logger.debug("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
         if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("POST")) {
             // inserting new objects
@@ -94,6 +96,7 @@ public class CsvRestHandler extends RequestHandler {
         /*
          * Finish session
          */
+
         if (!context.getSession().isSystemSession()) {
             Core.logout(context.getSession());
         }

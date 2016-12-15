@@ -41,6 +41,7 @@ public class CsvImporter {
         Boolean entityHasPk = false;
         ArrayList<String> errorMessages = new ArrayList<String>();
 
+        context.startTransaction();
         while ((line = bufferedReader.readLine()) != null) {
             if (line.startsWith("#") || line.length() == 0) {
                 continue;
@@ -207,7 +208,13 @@ public class CsvImporter {
                 }
             }
             lineNo++;
+            if(lineNo % 100 == 0){
+                context.endTransaction();
+                context.startTransaction();
+            }
         }
+        context.endTransaction();
+
         logger.info("objects created: " + lineNo);
         JSONObject response = new JSONObject();
         response.put("lines_processed", lineNo);
@@ -217,6 +224,7 @@ public class CsvImporter {
             response.put("status", "successfully created objects");
             response.put("errors", errorMessages.toArray());
         }
+        inputStream.close();
         writer.write(response.toString());
     }
 
