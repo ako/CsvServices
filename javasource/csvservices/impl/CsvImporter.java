@@ -10,6 +10,7 @@ import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.systemwideinterfaces.core.UserException;
 import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
+import com.mendix.thirdparty.org.json.JSONArray;
 import com.mendix.thirdparty.org.json.JSONObject;
 
 import java.io.*;
@@ -29,7 +30,7 @@ public class CsvImporter {
      * Create new entities for uploaded stuff
      */
     public void csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream) throws IOException {
-        logger.info("csvToEntities");
+        logger.info(String.format("csvToEntities: %s.%s",moduleName,entityName));
         final String csvSplitter = (",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = null;
@@ -39,7 +40,7 @@ public class CsvImporter {
         Format[] attributeFormatters = null;
         Boolean[] attributeIsPK = null;
         Boolean entityHasPk = false;
-        ArrayList<String> errorMessages = new ArrayList<String>();
+        JSONArray errorMessages = new JSONArray();
 
         context.startTransaction();
         while ((line = bufferedReader.readLine()) != null) {
@@ -114,7 +115,7 @@ public class CsvImporter {
                         } catch (Exception e) {
                             logger.info(e);
                             logger.warn("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
-                            errorMessages.add("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
+                            errorMessages.put("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
                         }
                     }
                     for (int i = 0; i < values.length; i++) {
@@ -147,8 +148,8 @@ public class CsvImporter {
                                         logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
                                         ids.add(refObjectList.get(0).getId());
                                     } else {
-                                        logger.debug("found more than one object on ref");
-                                        errorMessages.add("found more than one object on ref");
+                                        logger.warn("found more than one object on ref");
+                                        errorMessages.put("found more than one object on ref");
                                     }
                                 }
                                 // add reference to object
@@ -160,11 +161,18 @@ public class CsvImporter {
                                     logger.debug("reference xpath: " + xpath);
                                     try {
                                         List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
-                                        logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
-                                        object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
+                                        if(refObjectList.size() != 0) {
+                                            logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
+                                            object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
+                                        }else{
+                                            String errorMsg = String.format("Associated object %s for %s where %s=%s not found",
+                                                    assoc.getChild().getName(), assoc.getName(), refInfo[1],values[i]);
+                                            logger.warn(errorMsg);
+                                            errorMessages.put(errorMsg);
+                                        }
                                     } catch (Exception e) {
-                                        logger.debug("Failed to set reference: " + e.getMessage());
-                                        errorMessages.add("Failed to set reference: " + e.getMessage());
+                                        logger.warn("Failed to set reference: " + e.getMessage());
+                                        errorMessages.put("Failed to set reference: " + e.getMessage());
                                     }
                                 }
                             }
@@ -196,15 +204,15 @@ public class CsvImporter {
                 } catch (CoreException e) {
                     logger.warn(e);
                     logger.warn("failed to create object: " + object);
-                    errorMessages.add("failed to create object: " + object);
+                    errorMessages.put("failed to create object: " + object);
                 } catch (UserException e2) {
                     logger.warn(e2);
                     logger.warn("failed to create object: " + e2.getMessage());
-                    errorMessages.add("failed to create object: " + object);
+                    errorMessages.put("failed to create object: " + object);
                 } catch (MendixRuntimeException e3) {
                     logger.warn(e3);
                     logger.warn("failed to create object: " + e3.getMessage());
-                    errorMessages.add("failed to create object: " + object);
+                    errorMessages.put("failed to create object: " + object);
                 }
             }
             lineNo++;
@@ -218,14 +226,25 @@ public class CsvImporter {
         logger.info("objects created: " + lineNo);
         JSONObject response = new JSONObject();
         response.put("lines_processed", lineNo);
-        if (errorMessages.size() == 0) {
+        if (errorMessages.length() == 0) {
             response.put("status", "successfully created objects");
         } else {
-            response.put("status", "successfully created objects");
-            response.put("errors", errorMessages.toArray());
+            logger.warn("# Errors during import: " + errorMessages.length());
+            logger.warn(errorMessages.get(0));
+            response.put("status", "Failure during object creation");
+            response.put("numberOfErrors",errorMessages.length());
+            //response.put("errors",errorMessages.subList(0,Math.min(10,errorMessages.length())).toArray());
+            response.put("errors", errorMessages);
         }
         inputStream.close();
-        writer.write(response.toString());
+        String responseString = "";
+        try{
+            responseString = response.toString();
+        }catch (Exception e){
+            e.printStackTrace();
+            logger.error(e.getMessage());
+        }
+        writer.write(responseString);
     }
 
     private Object toDateValue(String value, Format attributeFormatter) {
