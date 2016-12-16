@@ -1,0 +1,1 @@
+start /b "netcat" cmd /c "%NETCAT_PATH%\nc.exe -l -p 31337 | jq --stream \"fromstream(1|truncate_stream(.))\""

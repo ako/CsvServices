@@ -42,8 +42,8 @@ rem
 
 rem start /b "netcat" cmd /c "%NETCAT_PATH%\nc.exe -l -p 31337 | jq '.'"
 
-rem set CMD="{'action': 'create_log_subscriber', 'params': {'type': 'tcpjson', 'name': 'TCPJSONLog','autosubscribe': 'INFO', 'host': '127.0.0.1', 'port':31337}}" 
-rem curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+set CMD="{'action': 'create_log_subscriber', 'params': {'type': 'tcpjson', 'name': 'TCPJSONLog','autosubscribe': 'INFO', 'host': '127.0.0.1', 'port':31337}}"
+curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem start runtime logging
