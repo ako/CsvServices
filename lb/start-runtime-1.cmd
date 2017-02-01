@@ -6,7 +6,11 @@ set APP_PATH=C:\Users\ako\Dropbox (Mendix)\Projects\mendix\CsvServices
 set APP_PATH_UX=C:/Users/ako/Dropbox (Mendix)/Projects/mendix/CsvServices
 set MX_INSTALL_PATH=C:\Program Files\Mendix\7.0.0-rc1
 set MX_INSTALL_PATH_UX=C:/Program Files/Mendix/7.0.0-rc1
-set M2EE_ADMIN_PASS=1
+set M2EE_ADMIN_PASS=2
+set M2EE_ADMIN_PASS_BASE64=Mg0K
+set M2EE_ADMIN_PASS_BASE64=MQ==
+set M2EE_MONITORING_PASS=3
+set M2EE_MONITORING_PASS_BASE64=Mw0K
 set M2EE_ADMIN_PORT=8092
 set M2EE_RUNTIME_PORT=8082
 set APP_LOG_PATH=\temp\app-1.log
@@ -34,7 +38,7 @@ rem
 
 
 set CMD='{"action": "create_log_subscriber", "params": {"max_rotation": 7, "name": "MXLOGSUBS", "filename": "%APP_LOG_PATH_UX%", "autosubscribe": "INFO", "type": "file", "max_size": 10485760}}'
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_MONITORING_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem start tcp logsubscriber
@@ -43,41 +47,41 @@ rem
 rem start /b "netcat" cmd /c "%NETCAT_PATH%\nc.exe -l -p 31337 | jq '.'"
 
 set CMD="{'action': 'create_log_subscriber', 'params': {'type': 'tcpjson', 'name': 'TCPJSONLog','autosubscribe': 'INFO', 'host': '127.0.0.1', 'port':31337}}"
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_ADMIN_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem start runtime logging
 rem
 
 set CMD="{'action': 'start_logging'}" 
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_ADMIN_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem set loglevels
 rem
 
 set CMD="{ 'action':'set_log_level', 'params': {'nodes' : [ { 'name':'ConnectionBus', 'level':'INFO'}, { 'name':'ActionManager', 'level':'INFO'} ], 'force':True} }"
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_ADMIN_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem configure appcontainer
 rem
 
 set CMD="{'action': 'update_appcontainer_configuration', 'params': {'runtime_port': %M2EE_RUNTIME_PORT%, 'runtime_listen_addresses': '*', 'runtime_jetty_options': {'use_blocking_connector': false}}}"
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_ADMIN_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem update configuration
 rem
 
 set CMD="{'action': 'update_configuration', 'params': {'DatabaseHost': '127.0.0.1:5432', 'DTAPMode': 'D', 'MicroflowConstants': {'CsvServices.CSV_SERVICES_VERSION': '1.1.3'}, 'BasePath': '%APP_PATH_UX%/Deployment', 'DatabaseUserName': 'mx', 'DatabasePassword': 'mx', 'DatabaseName': 'mxdev3', 'RuntimePath': '%MX_INSTALL_PATH_UX%/runtime', 'DatabaseType': 'PostgreSQL', 'ScheduledEventExecution': 'NONE'}}"
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_ADMIN_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 rem
 rem start app
 rem
 
 set CMD="{'action': 'start'}"
-curl -i -H "X-M2EE-Authentication: MQ==" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
+curl -i -H "X-M2EE-Authentication: %M2EE_ADMIN_PASS_BASE64%" -H "Content-Type: application/json" -X POST http://localhost:%M2EE_ADMIN_PORT%/ -d %CMD%
 
 tail -f %APP_LOG_PATH%
