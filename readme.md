@@ -158,6 +158,10 @@ An example how you can load data from Mendix into R:
    
     * Fix for including error messages in response
     
+  * 2.1.0
+  
+    * Upgrade to Mendix 7
+    
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
  [3]: docs/csv-import-resource-mf-action.png
