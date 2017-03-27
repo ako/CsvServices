@@ -6,3 +6,4 @@ deployment
 *.mpr.bak
 *.mpr.lock
 *.csv~
+*~
