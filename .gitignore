@@ -7,3 +7,6 @@ deployment
 *.mpr.lock
 *.csv~
 *~
+userlib
+.classpath
+*.swp

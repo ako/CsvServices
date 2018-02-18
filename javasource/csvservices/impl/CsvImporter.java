@@ -25,7 +25,7 @@ import java.util.List;
  */
 public class CsvImporter {
     private static ILogNode logger = Core.getLogger(CsvImporter.class.getName());
-
+    public static final String UTF8_BOM = "\uFEFF";
     /*
      * Create new entities for uploaded stuff
      */
@@ -44,6 +44,9 @@ public class CsvImporter {
 
         context.startTransaction();
         while ((line = bufferedReader.readLine()) != null) {
+            if (lineNo == 0 && line.startsWith(UTF8_BOM)){
+                line = line.substring(1);
+            }
             if (line.startsWith("#") || line.length() == 0) {
                 continue;
             }
