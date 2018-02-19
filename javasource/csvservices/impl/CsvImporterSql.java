@@ -26,7 +26,8 @@ import java.util.List;
  * Created by ako on 2/10/2015.
  */
 public class CsvImporterSql {
-    private static ILogNode logger = Core.getLogger(CsvImporterSql.class.getName());
+    private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
+
 
     /*
      * Create new entities for uploaded stuff

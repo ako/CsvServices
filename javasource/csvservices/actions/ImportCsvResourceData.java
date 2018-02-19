@@ -14,6 +14,7 @@ import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
+import csvservices.impl.CsvServicesImpl;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringWriter;
@@ -63,6 +64,7 @@ public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
 	}
 
 	// BEGIN EXTRA CODE
-    private final ILogNode logger = Core.getLogger(this.getClass().getName());
+	private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
+
 	// END EXTRA CODE
 }

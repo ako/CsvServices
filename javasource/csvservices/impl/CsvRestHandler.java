@@ -19,7 +19,7 @@ import java.io.Writer;
  */
 public class CsvRestHandler extends RequestHandler {
     public static String serviceRoot = "csv/";
-    private static ILogNode logger = Core.getLogger(CsvRestHandler.class.getName());
+    private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
     private final IContext context;
     private final String requiredUserRole;
 

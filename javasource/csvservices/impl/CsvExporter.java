@@ -10,6 +10,8 @@ import com.mendix.systemwideinterfaces.core.IMendixObjectMember;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -17,7 +19,9 @@ import java.util.*;
  * Created by ako on 2/10/2015.
  */
 public class CsvExporter {
-    private static ILogNode logger = Core.getLogger(CsvExporter.class.getName());
+
+    private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
+    private DecimalFormat df = new DecimalFormat("####.#####");
 
     public void entityToCsv(IContext context, Writer writer, String moduleName, String entityName) throws CoreException, IOException {
         int recordIdx = 0;
@@ -98,7 +102,7 @@ public class CsvExporter {
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssXXX");
                 csvValue = dateFormat.format(value);
             } else if (value.getClass().equals(String.class)) {
-                csvValue = String.format("\"%s\"", ((String)value).replace("\"","\"\""));
+                csvValue = String.format("\"%s\"", ((String) value).replace("\"", "\"\""));
             } else if (value.getClass().equals(ArrayList.class)) {
                 csvValue = "";
                 logger.debug("arrayList.size: " + ((ArrayList) value).size());
@@ -122,6 +126,18 @@ public class CsvExporter {
             } else if (value.getClass().equals(Boolean.class)) {
                 logger.debug("boolean = " + value);
                 csvValue = String.format("%b", value);
+            } else if (value.getClass().equals(BigDecimal.class)) {
+                logger.debug("bigdecimal = " + value);
+                csvValue = df.format(value);
+            } else if (value.getClass().equals(Currency.class)) {
+                logger.debug("Currency = " + value);
+                csvValue = String.format("%10.2f", value);
+            } else if (value.getClass().equals(Float.class)) {
+                logger.debug("float = " + value);
+                csvValue = String.format("%f", value);
+            } else if (value.getClass().equals(Double.class)) {
+                logger.debug("double = " + value);
+                csvValue = String.format("%f", value);
             } else {
                 csvValue = String.format("%g", value);
             }

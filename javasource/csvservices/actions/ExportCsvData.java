@@ -13,39 +13,38 @@ import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
-import csvservices.impl.CsvImporter;
+import csvservices.impl.CsvExporter;
 import csvservices.impl.CsvServicesImpl;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class ImportCsvData extends CustomJavaAction<java.lang.Long>
+public class ExportCsvData extends CustomJavaAction<java.lang.String>
 {
 	private java.lang.String Entity;
-	private java.lang.String CsvData;
 
-	public ImportCsvData(IContext context, java.lang.String Entity, java.lang.String CsvData)
+	public ExportCsvData(IContext context, java.lang.String Entity)
 	{
 		super(context);
 		this.Entity = Entity;
-		this.CsvData = CsvData;
 	}
 
 	@Override
-	public java.lang.Long executeAction() throws Exception
+	public java.lang.String executeAction() throws Exception
 	{
 		// BEGIN USER CODE
         logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
-        CsvImporter csvImporter = new CsvImporter();
+        CsvExporter csvExporter = new CsvExporter();
         StringWriter outputWriter = new StringWriter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
 
-        csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, new ByteArrayInputStream(this.CsvData.getBytes(StandardCharsets.UTF_8)));
-        logger.info("Done importing: " + outputWriter.toString());
+        csvExporter.entityToCsv(getContext(), outputWriter, moduleName, entityName);
+        logger.info("Done exporting: " + outputWriter.toString());
+        String result = outputWriter.toString();
         outputWriter.close();
-        return 0L;
+        return result;
 		// END USER CODE
 	}
 
@@ -55,11 +54,11 @@ public class ImportCsvData extends CustomJavaAction<java.lang.Long>
 	@Override
 	public java.lang.String toString()
 	{
-		return "ImportCsvData";
+		return "ExportCsvData";
 	}
 
 	// BEGIN EXTRA CODE
-	private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
+    private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
 
 	// END EXTRA CODE
 }

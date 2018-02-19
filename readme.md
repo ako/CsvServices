@@ -162,6 +162,11 @@ An example how you can load data from Mendix into R:
   
     * Upgrade to Mendix 7
     
+  * 2.1.1
+  
+    * Ignore UTF-8 BOM if provided
+    * Export csv java action added
+    
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
  [3]: docs/csv-import-resource-mf-action.png

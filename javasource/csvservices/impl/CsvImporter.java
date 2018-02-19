@@ -24,7 +24,7 @@ import java.util.List;
  * Created by ako on 2/10/2015.
  */
 public class CsvImporter {
-    private static ILogNode logger = Core.getLogger(CsvImporter.class.getName());
+    private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
     public static final String UTF8_BOM = "\uFEFF";
     /*
      * Create new entities for uploaded stuff

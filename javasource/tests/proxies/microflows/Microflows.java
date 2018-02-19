@@ -14,6 +14,18 @@ import com.mendix.systemwideinterfaces.core.IContext;
 public class Microflows
 {
 	// These are the microflows for the Tests module
+	public static void exportCsv(IContext context)
+	{
+		try
+		{
+			Map<java.lang.String, Object> params = new HashMap<java.lang.String, Object>();
+			Core.execute(context, "Tests.ExportCsv", params);
+		}
+		catch (CoreException e)
+		{
+			throw new MendixRuntimeException(e);
+		}
+	}
 	public static void importCsv(IContext context)
 	{
 		try
