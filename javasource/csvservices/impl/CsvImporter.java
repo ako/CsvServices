@@ -31,7 +31,7 @@ public class CsvImporter {
      */
     public void csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream) throws IOException {
         logger.info(String.format("csvToEntities: %s.%s",moduleName,entityName));
-        final String csvSplitter = (",(?=([^\"]*\"[^\"]*\")*[^\"]*$)");
+        String csvSplitter = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = null;
         int lineNo = 0;
@@ -52,6 +52,13 @@ public class CsvImporter {
             }
             if (lineNo == 0) {
                 // Header line
+                // Determine what delimiter is used
+                if(line.contains(";")){
+                    csvSplitter = ";" + csvSplitter;
+                }else {
+                    csvSplitter = "," + csvSplitter;
+                }
+                // Determine attribute names
                 attributeNames = line.split(csvSplitter);
                 attributeFormats = new String[attributeNames.length];
                 attributeFormatters = new Format[attributeNames.length];

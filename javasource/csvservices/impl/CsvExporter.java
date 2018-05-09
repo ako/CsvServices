@@ -23,7 +23,7 @@ public class CsvExporter {
     private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
     private DecimalFormat df = new DecimalFormat("####.#####");
 
-    public void entityToCsv(IContext context, Writer writer, String moduleName, String entityName) throws CoreException, IOException {
+    public void entityToCsv(IContext context, Writer writer, String moduleName, String entityName, String delimiter) throws CoreException, IOException {
         int recordIdx = 0;
         int pageSize = 10;
         int offset = 0;
@@ -70,7 +70,7 @@ public class CsvExporter {
                                 (objMember.getName().indexOf(".") > -1
                                         ? objMember.getName().split("[.]")[1]
                                         : objMember.getName()));
-                        prefix = ",";
+                        prefix = delimiter;
                     }
                     writer.write("\n");
                 }
@@ -81,7 +81,7 @@ public class CsvExporter {
                 writer.write(String.format("%d,", obj.getId().toLong()));
                 for (IMendixObjectMember objMember : members.values()) {
                     writeAttributeValue(context, writer, prefix, objMember);
-                    prefix = ",";
+                    prefix = delimiter;
                 }
                 writer.write("\n");
                 recordIdx++;
@@ -121,6 +121,9 @@ public class CsvExporter {
                 logger.debug("int/long = " + value);
                 csvValue = String.format("%d", value);
             } else if (value.getClass().equals(IMendixIdentifier.class)) {
+                logger.debug("mxid: " + ((IMendixIdentifier) value).toLong());
+                csvValue = String.format("%d", ((IMendixIdentifier) value).toLong());
+            } else if (value instanceof IMendixIdentifier) {
                 logger.debug("mxid: " + ((IMendixIdentifier) value).toLong());
                 csvValue = String.format("%d", ((IMendixIdentifier) value).toLong());
             } else if (value.getClass().equals(Boolean.class)) {

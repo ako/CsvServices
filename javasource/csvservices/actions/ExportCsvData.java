@@ -23,11 +23,13 @@ import java.util.Arrays;
 public class ExportCsvData extends CustomJavaAction<java.lang.String>
 {
 	private java.lang.String Entity;
+	private java.lang.String Delimiter;
 
-	public ExportCsvData(IContext context, java.lang.String Entity)
+	public ExportCsvData(IContext context, java.lang.String Entity, java.lang.String Delimiter)
 	{
 		super(context);
 		this.Entity = Entity;
+		this.Delimiter = Delimiter;
 	}
 
 	@Override
@@ -35,12 +37,15 @@ public class ExportCsvData extends CustomJavaAction<java.lang.String>
 	{
 		// BEGIN USER CODE
         logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
+        if (this.Delimiter == null){
+        	this.Delimiter = ",";
+		}
         CsvExporter csvExporter = new CsvExporter();
         StringWriter outputWriter = new StringWriter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
 
-        csvExporter.entityToCsv(getContext(), outputWriter, moduleName, entityName);
+        csvExporter.entityToCsv(getContext(), outputWriter, moduleName, entityName,this.Delimiter);
         logger.info("Done exporting: " + outputWriter.toString());
         String result = outputWriter.toString();
         outputWriter.close();
