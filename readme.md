@@ -167,6 +167,11 @@ An example how you can load data from Mendix into R:
     * Ignore UTF-8 BOM if provided
     * Export csv java action added
     
+  * 2.1.2
+
+    * Importer will automatically detect delimiter: , or ;
+    * Exporter can be configured what delimiter to use
+    
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
  [3]: docs/csv-import-resource-mf-action.png

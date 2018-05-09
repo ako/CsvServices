@@ -79,7 +79,7 @@ public class CsvRestHandler extends RequestHandler {
             try {
                 iMxRuntimeResponse.setContentType("text/csv");
                 CsvExporter exporter = new CsvExporter();
-                exporter.entityToCsv(context, writer, path[0], path[1]);
+                exporter.entityToCsv(context, writer, path[0], path[1],",");
             } catch (CoreRuntimeException e) {
                 logger.error(stacktraceToString(e));
                 logger.error("Error while retrieving specified objects: " + e.getMessage());
