@@ -30,7 +30,9 @@ public class CsvImporter {
      * Create new entities for uploaded stuff
      */
     public void csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream) throws IOException {
+        IContext ctx = null;
         logger.info(String.format("csvToEntities: %s.%s",moduleName,entityName));
+
         String csvSplitter = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
         String line = null;
@@ -42,7 +44,8 @@ public class CsvImporter {
         Boolean entityHasPk = false;
         JSONArray errorMessages = new JSONArray();
 
-        context.startTransaction();
+        ctx = context.createClone();
+        ctx.startTransaction();
         while ((line = bufferedReader.readLine()) != null) {
             if (lineNo == 0 && line.startsWith(UTF8_BOM)){
                 line = line.substring(1);
@@ -110,7 +113,7 @@ public class CsvImporter {
                         String findByPkXpath = "//" + moduleName + "." + entityName + "[" + objectConstraint + " (1 = 1)]";
                         logger.debug("find by pk constraint: " + findByPkXpath);
                         try {
-                            List<IMendixObject> objects = Core.retrieveXPathQuery(context, findByPkXpath);
+                            List<IMendixObject> objects = Core.retrieveXPathQuery(ctx, findByPkXpath);
                             if (objects.size() > 0) {
                                 object = objects.get(0);
                             }
@@ -121,7 +124,7 @@ public class CsvImporter {
                     }
                     if (object == null) {
                         try {
-                            object = Core.instantiate(context, moduleName + "." + entityName);
+                            object = Core.instantiate(ctx, moduleName + "." + entityName);
                         } catch (Exception e) {
                             logger.info(e);
                             logger.warn("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
@@ -153,7 +156,7 @@ public class CsvImporter {
                                     logger.debug("ref: " + refs[ri]);
                                     String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], refs[ri]);
                                     logger.debug("xpath = " + xpath);
-                                    List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
+                                    List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
                                     if (refObjectList.size() == 1) {
                                         logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
                                         ids.add(refObjectList.get(0).getId());
@@ -163,17 +166,17 @@ public class CsvImporter {
                                     }
                                 }
                                 // add reference to object
-                                object.setValue(context, assoc.getName(), ids);
+                                object.setValue(ctx, assoc.getName(), ids);
                             } else {
                                 // reference
                                 if (values[i] != null && !values[i].equals("")) {
                                     String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
                                     logger.debug("reference xpath: " + xpath);
                                     try {
-                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(context, xpath);
+                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
                                         if(refObjectList.size() != 0) {
                                             logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
-                                            object.setValue(context, assoc.getName(), refObjectList.get(0).getId());
+                                            object.setValue(ctx, assoc.getName(), refObjectList.get(0).getId());
                                         }else{
                                             String errorMsg = String.format("Associated object %s for %s where %s=%s not found",
                                                     assoc.getChild().getName(), assoc.getName(), refInfo[1],values[i]);
@@ -202,15 +205,19 @@ public class CsvImporter {
                             }
                             logger.debug("attribute type: " + type.name());
                             values[i] = values[i].trim();
-                            if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
-                                object.setValue(context, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
-                            } else {
-                                object.setValue(context, attributeNames[i], values[i].replaceAll("^\"|\"$", ""));
+                            try {
+                                if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
+                                    object.setValue(ctx, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
+                                } else {
+                                    object.setValue(ctx, attributeNames[i], values[i].replaceAll("^\"|\"$", ""));
+                                }
+                            }catch(Exception e){
+                                logger.debug("Attribute cannot be set, ignoring: " + attributeNames[i]);
                             }
                         }
                     }
                     logger.debug("commiting object: " + object);
-                    Core.commit(context, object);
+                    Core.commit(ctx, object);
                 } catch (CoreException e) {
                     logger.warn(e);
                     logger.warn("failed to create object: " + object);
@@ -227,11 +234,12 @@ public class CsvImporter {
             }
             lineNo++;
             if(lineNo % 100 == 0){
-                context.endTransaction();
-                context.startTransaction();
+                ctx.endTransaction();
+                ctx = context.createClone();
+                ctx.startTransaction();
             }
         }
-        context.endTransaction();
+        ctx.endTransaction();
 
         logger.info("objects created: " + lineNo);
         JSONObject response = new JSONObject();

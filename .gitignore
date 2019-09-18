@@ -10,3 +10,6 @@ deployment
 userlib
 .classpath
 *.swp
+.gradle
+GPUCache
+

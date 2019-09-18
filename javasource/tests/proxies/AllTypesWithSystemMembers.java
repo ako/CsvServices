@@ -4,16 +4,16 @@
 
 package tests.proxies;
 
-public class AllTypes
+public class AllTypesWithSystemMembers
 {
-	private final com.mendix.systemwideinterfaces.core.IMendixObject allTypesMendixObject;
+	private final com.mendix.systemwideinterfaces.core.IMendixObject allTypesWithSystemMembersMendixObject;
 
 	private final com.mendix.systemwideinterfaces.core.IContext context;
 
 	/**
 	 * Internal name of this entity
 	 */
-	public static final java.lang.String entityName = "Tests.AllTypes";
+	public static final java.lang.String entityName = "Tests.AllTypesWithSystemMembers";
 
 	/**
 	 * Enum describing members of this entity
@@ -47,51 +47,51 @@ public class AllTypes
 		}
 	}
 
-	public AllTypes(com.mendix.systemwideinterfaces.core.IContext context)
+	public AllTypesWithSystemMembers(com.mendix.systemwideinterfaces.core.IContext context)
 	{
-		this(context, com.mendix.core.Core.instantiate(context, "Tests.AllTypes"));
+		this(context, com.mendix.core.Core.instantiate(context, "Tests.AllTypesWithSystemMembers"));
 	}
 
-	protected AllTypes(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixObject allTypesMendixObject)
+	protected AllTypesWithSystemMembers(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixObject allTypesWithSystemMembersMendixObject)
 	{
-		if (allTypesMendixObject == null)
+		if (allTypesWithSystemMembersMendixObject == null)
 			throw new java.lang.IllegalArgumentException("The given object cannot be null.");
-		if (!com.mendix.core.Core.isSubClassOf("Tests.AllTypes", allTypesMendixObject.getType()))
-			throw new java.lang.IllegalArgumentException("The given object is not a Tests.AllTypes");
+		if (!com.mendix.core.Core.isSubClassOf("Tests.AllTypesWithSystemMembers", allTypesWithSystemMembersMendixObject.getType()))
+			throw new java.lang.IllegalArgumentException("The given object is not a Tests.AllTypesWithSystemMembers");
 
-		this.allTypesMendixObject = allTypesMendixObject;
+		this.allTypesWithSystemMembersMendixObject = allTypesWithSystemMembersMendixObject;
 		this.context = context;
 	}
 
 	/**
-	 * @deprecated Use 'AllTypes.load(IContext, IMendixIdentifier)' instead.
+	 * @deprecated Use 'AllTypesWithSystemMembers.load(IContext, IMendixIdentifier)' instead.
 	 */
 	@java.lang.Deprecated
-	public static tests.proxies.AllTypes initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
+	public static tests.proxies.AllTypesWithSystemMembers initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
 	{
-		return tests.proxies.AllTypes.load(context, mendixIdentifier);
+		return tests.proxies.AllTypesWithSystemMembers.load(context, mendixIdentifier);
 	}
 
 	/**
 	 * Initialize a proxy using context (recommended). This context will be used for security checking when the get- and set-methods without context parameters are called.
 	 * The get- and set-methods with context parameter should be used when for instance sudo access is necessary (IContext.createSudoClone() can be used to obtain sudo access).
 	 */
-	public static tests.proxies.AllTypes initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixObject mendixObject)
+	public static tests.proxies.AllTypesWithSystemMembers initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixObject mendixObject)
 	{
-		return new tests.proxies.AllTypes(context, mendixObject);
+		return new tests.proxies.AllTypesWithSystemMembers(context, mendixObject);
 	}
 
-	public static tests.proxies.AllTypes load(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
+	public static tests.proxies.AllTypesWithSystemMembers load(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
 	{
 		com.mendix.systemwideinterfaces.core.IMendixObject mendixObject = com.mendix.core.Core.retrieveId(context, mendixIdentifier);
-		return tests.proxies.AllTypes.initialize(context, mendixObject);
+		return tests.proxies.AllTypesWithSystemMembers.initialize(context, mendixObject);
 	}
 
-	public static java.util.List<tests.proxies.AllTypes> load(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String xpathConstraint) throws com.mendix.core.CoreException
+	public static java.util.List<tests.proxies.AllTypesWithSystemMembers> load(com.mendix.systemwideinterfaces.core.IContext context, java.lang.String xpathConstraint) throws com.mendix.core.CoreException
 	{
-		java.util.List<tests.proxies.AllTypes> result = new java.util.ArrayList<tests.proxies.AllTypes>();
-		for (com.mendix.systemwideinterfaces.core.IMendixObject obj : com.mendix.core.Core.retrieveXPathQuery(context, "//Tests.AllTypes" + xpathConstraint))
-			result.add(tests.proxies.AllTypes.initialize(context, obj));
+		java.util.List<tests.proxies.AllTypesWithSystemMembers> result = new java.util.ArrayList<tests.proxies.AllTypesWithSystemMembers>();
+		for (com.mendix.systemwideinterfaces.core.IMendixObject obj : com.mendix.core.Core.retrieveXPathQuery(context, "//Tests.AllTypesWithSystemMembers" + xpathConstraint))
+			result.add(tests.proxies.AllTypesWithSystemMembers.initialize(context, obj));
 		return result;
 	}
 
@@ -549,7 +549,7 @@ public class AllTypes
 	 */
 	public final com.mendix.systemwideinterfaces.core.IMendixObject getMendixObject()
 	{
-		return allTypesMendixObject;
+		return allTypesWithSystemMembersMendixObject;
 	}
 
 	/**
@@ -568,7 +568,7 @@ public class AllTypes
 
 		if (obj != null && getClass().equals(obj.getClass()))
 		{
-			final tests.proxies.AllTypes that = (tests.proxies.AllTypes) obj;
+			final tests.proxies.AllTypesWithSystemMembers that = (tests.proxies.AllTypesWithSystemMembers) obj;
 			return getMendixObject().equals(that.getMendixObject());
 		}
 		return false;
@@ -585,7 +585,7 @@ public class AllTypes
 	 */
 	public static java.lang.String getType()
 	{
-		return "Tests.AllTypes";
+		return "Tests.AllTypesWithSystemMembers";
 	}
 
 	/**

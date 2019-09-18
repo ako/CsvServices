@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.Base64;
 
 /**
  * Created by ako on 1/24/2015.
@@ -116,7 +117,8 @@ public class CsvRestHandler extends RequestHandler {
         logger.info("authorization: " + authHeader);
         if (authHeader != null && authHeader.trim().startsWith("Basic")) {
             String base64Credentials = authHeader.trim().substring("Basic".length()).trim();
-            String base64 = new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Credentials));
+            //String base64 = new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Credentials));
+            String base64 = new String(Base64.getDecoder().decode(base64Credentials));
             logger.info("credentials: " + base64);
             String[] parts = base64.split(":");
             username = parts[0];

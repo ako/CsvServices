@@ -141,6 +141,7 @@ An example how you can load data from Mendix into R:
 ### Tips
 
 * It helps if you create a public key attribute for every entity, which can be used in associations. For example, the Orders entity has a OrderId attribute.
+* Set loglevel to DEBUG to get fine grained log information.
 
 ### Todo
 
@@ -171,6 +172,9 @@ An example how you can load data from Mendix into R:
 
     * Importer will automatically detect delimiter: , or ;
     * Exporter can be configured what delimiter to use
+    * Upgrade to Mendix 7.23.3 and Mendix 8
+    * Added gradle build script
+    * During import ignore csv columns which cannot be mapped 
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
