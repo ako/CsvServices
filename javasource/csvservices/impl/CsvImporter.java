@@ -26,28 +26,43 @@ import java.util.List;
 public class CsvImporter {
     private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
     public static final String UTF8_BOM = "\uFEFF";
+
+    private boolean containsUnfinishedString(String s) {
+        String s2 = new String(s);
+        boolean unfinishedString = (s2.replaceAll("[^\"]", "").length() % 2) == 1;
+        logger.debug(String.format("containsUnfinishedString: %b, for %s", unfinishedString, s));
+        return unfinishedString;
+    }
+
     /*
      * Create new entities for uploaded stuff
      */
-    public void csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream) throws IOException {
+    public void csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream, Boolean strict) throws IOException {
         IContext ctx = null;
-        logger.info(String.format("csvToEntities: %s.%s",moduleName,entityName));
+        logger.info(String.format("csvToEntities: %s.%s", moduleName, entityName));
 
         String csvSplitter = "(?=([^\"]*\"[^\"]*\")*[^\"]*$)";
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
-        String line = null;
+        String line = "";
         int lineNo = 0;
+        int objNo = 0;
         String[] attributeNames = null;
         String[] attributeFormats = null;
         Format[] attributeFormatters = null;
         Boolean[] attributeIsPK = null;
         Boolean entityHasPk = false;
         JSONArray errorMessages = new JSONArray();
+        String nextLine = null;
 
         ctx = context.createClone();
         ctx.startTransaction();
-        while ((line = bufferedReader.readLine()) != null) {
-            if (lineNo == 0 && line.startsWith(UTF8_BOM)){
+        while ((nextLine = bufferedReader.readLine()) != null) {
+            line += nextLine;
+            logger.debug("Processing line " + line);
+//            if(lineNo > 3){
+//                break;
+//            }
+            if (lineNo == 0 && line.startsWith(UTF8_BOM)) {
                 line = line.substring(1);
             }
             if (line.startsWith("#") || line.length() == 0) {
@@ -56,9 +71,9 @@ public class CsvImporter {
             if (lineNo == 0) {
                 // Header line
                 // Determine what delimiter is used
-                if(line.contains(";")){
+                if (line.contains(";")) {
                     csvSplitter = ";" + csvSplitter;
-                }else {
+                } else {
                     csvSplitter = "," + csvSplitter;
                 }
                 // Determine attribute names
@@ -86,6 +101,11 @@ public class CsvImporter {
                     logger.debug("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
                 }
             } else {
+                if (containsUnfinishedString(line)) {
+                    // add next line to current line
+                    lineNo++;
+                    continue;
+                }
                 IMendixObject object = null;
                 try {
                     String[] values = line.split(csvSplitter);
@@ -98,7 +118,7 @@ public class CsvImporter {
                                 IMetaPrimitive.PrimitiveType type = metaPrimitive.getType();
                                 if (type.equals(IMetaPrimitive.PrimitiveType.String)
                                         || type.equals(IMetaPrimitive.PrimitiveType.HashString)
-                                        ) {
+                                ) {
                                     objectConstraint += "(" + attributeNames[i] + " = '" + values[i] + "') and ";
                                 } else if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
                                     SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
@@ -132,87 +152,99 @@ public class CsvImporter {
                         }
                     }
                     for (int i = 0; i < values.length; i++) {
-                        values[i] = values[i].trim();
-                        logger.debug(String.format("value: %s = %s", attributeNames[i], values[i]));
-                        /*
-                         * check if reference
-                         */
-                        if (attributeNames[i].contains(".")) {
-                            String[] refInfo = attributeNames[i].split("\\.");
-                            logger.debug("Assoc: " + refInfo[0]);
-
-                            IMetaAssociation assoc = Core.getMetaAssociation(moduleName + "." + refInfo[0]);
-                            logger.debug("Assoc: " + assoc.getName() + ", " + assoc.getParent().getName() + " - " + assoc.getChild().getName());
-                            /*
-                             * check if reference set
-                             */
-
-                            if (values[i].startsWith("[") && values[i].endsWith("]")) {
-                                // reference set
-                                String[] refs = values[i].replaceAll("^\\[|\\]$", "").split(";");
-                                // find referenced objects
-                                List<IMendixIdentifier> ids = new ArrayList();
-                                for (int ri = 0; ri < refs.length; ri++) {
-                                    logger.debug("ref: " + refs[ri]);
-                                    String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], refs[ri]);
-                                    logger.debug("xpath = " + xpath);
-                                    List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
-                                    if (refObjectList.size() == 1) {
-                                        logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
-                                        ids.add(refObjectList.get(0).getId());
-                                    } else {
-                                        logger.warn("found more than one object on ref");
-                                        errorMessages.put("found more than one object on ref");
-                                    }
-                                }
-                                // add reference to object
-                                object.setValue(ctx, assoc.getName(), ids);
-                            } else {
-                                // reference
-                                if (values[i] != null && !values[i].equals("")) {
-                                    String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
-                                    logger.debug("reference xpath: " + xpath);
-                                    try {
-                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
-                                        if(refObjectList.size() != 0) {
-                                            logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
-                                            object.setValue(ctx, assoc.getName(), refObjectList.get(0).getId());
-                                        }else{
-                                            String errorMsg = String.format("Associated object %s for %s where %s=%s not found",
-                                                    assoc.getChild().getName(), assoc.getName(), refInfo[1],values[i]);
-                                            logger.warn(errorMsg);
-                                            errorMessages.put(errorMsg);
-                                        }
-                                    } catch (Exception e) {
-                                        logger.warn("Failed to set reference: " + e.getMessage());
-                                        errorMessages.put("Failed to set reference: " + e.getMessage());
-                                    }
-                                }
-                            }
-
-                        } else {
-                            /*
-                             * set attribute value
-                             */
-                            IMetaPrimitive.PrimitiveType type = null;
-                            try {
-                                IMetaPrimitive primitive = null;
-                                primitive = object.getMetaObject().getMetaPrimitive(attributeNames[i]);
-                                type = primitive.getType();
-                            } catch (Exception e) {
-                                logger.error("Failed to get primitive for attribute: " + attributeNames[i]);
-                                type = IMetaPrimitive.PrimitiveType.String;
-                            }
-                            logger.debug("attribute type: " + type.name());
+                        try {
                             values[i] = values[i].trim();
-                            try {
-                                if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
-                                    object.setValue(ctx, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
+                            logger.debug(String.format("value: %s = %s", attributeNames[i], values[i]));
+                            /*
+                             * check if reference
+                             */
+                            if (attributeNames[i].contains(".")) {
+                                String[] refInfo = attributeNames[i].split("\\.");
+                                logger.debug("Assoc: " + refInfo[0]);
+
+                                IMetaAssociation assoc = Core.getMetaAssociation(moduleName + "." + refInfo[0]);
+                                logger.debug("Assoc: " + assoc.getName() + ", " + assoc.getParent().getName() + " - " + assoc.getChild().getName());
+                                /*
+                                 * check if reference set
+                                 */
+
+                                if (values[i].startsWith("[") && values[i].endsWith("]")) {
+                                    // reference set
+                                    String[] refs = values[i].replaceAll("^\\[|\\]$", "").split(";");
+                                    // find referenced objects
+                                    List<IMendixIdentifier> ids = new ArrayList();
+                                    for (int ri = 0; ri < refs.length; ri++) {
+                                        logger.debug("ref: " + refs[ri]);
+                                        String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], refs[ri]);
+                                        logger.debug("xpath = " + xpath);
+                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
+                                        if (refObjectList.size() == 1) {
+                                            logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
+                                            ids.add(refObjectList.get(0).getId());
+                                        } else {
+                                            logger.warn("found more than one object on ref");
+                                            errorMessages.put("found more than one object on ref");
+                                        }
+                                    }
+                                    // add reference to object
+                                    object.setValue(ctx, assoc.getName(), ids);
                                 } else {
-                                    object.setValue(ctx, attributeNames[i], values[i].replaceAll("^\"|\"$", ""));
+                                    // reference
+                                    if (values[i] != null && !values[i].equals("")) {
+                                        String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
+                                        logger.debug("reference xpath: " + xpath);
+                                        try {
+                                            List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
+                                            if (refObjectList.size() != 0) {
+                                                logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
+                                                object.setValue(ctx, assoc.getName(), refObjectList.get(0).getId());
+                                            } else {
+                                                String errorMsg = String.format("Associated object %s for %s where %s=%s not found",
+                                                        assoc.getChild().getName(), assoc.getName(), refInfo[1], values[i]);
+                                                logger.warn(errorMsg);
+                                                errorMessages.put(errorMsg);
+                                            }
+                                        } catch (Exception e) {
+                                            logger.warn("Failed to set reference: " + e.getMessage());
+                                            errorMessages.put("Failed to set reference: " + e.getMessage());
+                                        }
+                                    }
                                 }
-                            }catch(Exception e){
-                                logger.debug("Attribute cannot be set, ignoring: " + attributeNames[i]);
+
+                            } else {
+                                /*
+                                 * set attribute value
+                                 */
+                                IMetaPrimitive.PrimitiveType type = null;
+                                try {
+                                    IMetaPrimitive primitive = null;
+                                    primitive = object.getMetaObject().getMetaPrimitive(attributeNames[i]);
+                                    type = primitive.getType();
+                                } catch (Exception e) {
+                                    logger.error("Failed to get primitive for attribute: " + attributeNames[i]);
+                                    type = IMetaPrimitive.PrimitiveType.String;
+                                }
+                                logger.debug("attribute type: " + type.name());
+                                values[i] = values[i].trim();
+                                try {
+                                    if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
+                                        object.setValue(ctx, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
+                                    } else {
+                                        object.setValue(ctx, attributeNames[i], values[i].replaceAll("^\"|\"$", ""));
+                                    }
+                                } catch (Exception e) {
+                                    logger.debug(String.format("Attribute %s cannot be set", attributeNames[i]));
+                                    errorMessages.put(String.format("Attribute %s cannot be set", attributeNames[i]));
+                                    if (strict) {
+                                        throw e;
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                            logger.debug(String.format("Attribute %d cannot be set for row %d", i, lineNo));
+                            errorMessages.put(String.format("Attribute %d cannot be set for row %d", i, lineNo));
+                            if (strict) {
+                                throw e;
                             }
                         }
                     }
@@ -233,7 +265,9 @@ public class CsvImporter {
                 }
             }
             lineNo++;
-            if(lineNo % 100 == 0){
+            line = "";
+            objNo++;
+            if (objNo % 100 == 0) {
                 ctx.endTransaction();
                 ctx = context.createClone();
                 ctx.startTransaction();
@@ -241,7 +275,7 @@ public class CsvImporter {
         }
         ctx.endTransaction();
 
-        logger.info("objects created: " + lineNo);
+        logger.info("objects created: " + objNo);
         JSONObject response = new JSONObject();
         response.put("lines_processed", lineNo);
         if (errorMessages.length() == 0) {
@@ -250,15 +284,15 @@ public class CsvImporter {
             logger.warn("# Errors during import: " + errorMessages.length());
             logger.warn(errorMessages.get(0));
             response.put("status", "Failure during object creation");
-            response.put("numberOfErrors",errorMessages.length());
+            response.put("numberOfErrors", errorMessages.length());
             //response.put("errors",errorMessages.subList(0,Math.min(10,errorMessages.length())).toArray());
             response.put("errors", errorMessages);
         }
         inputStream.close();
         String responseString = "";
-        try{
+        try {
             responseString = response.toString();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             logger.error(e.getMessage());
         }

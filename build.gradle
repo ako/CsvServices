@@ -22,6 +22,10 @@ dependencies {
     compile name: 'com.mendix.logging-api'
     compile name: 'com.mendix.m2ee-api'
     compile name: 'javax.servlet-api.servlet'
+
+    // commons compress
+    compile group: 'org.apache.commons', name: 'commons-compress', version: '1.19'
+
     //
     //testRuntime 'org.junit.jupiter:junit-jupiter-api:5.4.2'
     //testRuntime 'org.junit.jupiter:junit-jupiter-engine:5.4.2'

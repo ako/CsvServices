@@ -175,6 +175,8 @@ An example how you can load data from Mendix into R:
     * Upgrade to Mendix 7.23.3 and Mendix 8
     * Added gradle build script
     * During import ignore csv columns which cannot be mapped 
+    * Added support for importing multiline strings, if using double quotes
+    * Introduced strict mode for importing data
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png

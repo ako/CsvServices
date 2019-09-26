@@ -71,7 +71,7 @@ public class CsvRestHandler extends RequestHandler {
                 importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
             }else {
                 CsvImporter importer = new CsvImporter();
-                importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
+                importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream(),false);
             }
         } else if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("GET")) {
             /*

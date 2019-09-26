@@ -42,7 +42,7 @@ public class ImportCsvData extends CustomJavaAction<java.lang.Long>
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
 
-        csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, new ByteArrayInputStream(this.CsvData.getBytes(StandardCharsets.UTF_8)));
+        csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, new ByteArrayInputStream(this.CsvData.getBytes(StandardCharsets.UTF_8)),false);
         logger.info("Done importing: " + outputWriter.toString());
         outputWriter.close();
         return 0L;

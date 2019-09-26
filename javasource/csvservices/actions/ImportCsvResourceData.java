@@ -46,7 +46,7 @@ public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
         try (FileInputStream fis = new FileInputStream(myFile);
              StringWriter outputWriter = new StringWriter()
         ) {
-            csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, fis);
+            csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, fis,false);
             logger.info("Done importing: " + outputWriter.toString());
 
         }

@@ -12,4 +12,5 @@ userlib
 *.swp
 .gradle
 GPUCache
-
+bin
+.settings
