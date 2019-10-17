@@ -64,6 +64,15 @@ Notes:
         4,         cas,       Pon duz apkar.,  4596,  [23;2]
         5,         pignadhiz, Hevizkug.,       25041, [1;2;3]
         
+ * Alternatively, to define a set of associations in the header use [association_name.attribute_Name;], where the comma indicates the separator
+ 
+         ProductId, Name,      Description,     Price, [Product_Labels.LabelId]
+         1,         reubo,     Pipopwu ric.,    92468, 57
+         2,         hujvi,     Kiuci cuguwkus., 25801, 4
+         3,         gi,        Fuli juja.,      19411, 3
+         4,         cas,       Pon duz apkar.,  4596,  23;2
+         5,         pignadhiz, Hevizkug.,       25041, 1;2;3
+                
  * You can specify which columns make up a unique key for the record. You indicate that a columns is part of the unique 
    key by adding an asteriks (*) after the column name. If you do this, when inserting new objects the module will
    check if the object already exists. If it does, the existing record will be updated.
@@ -177,6 +186,15 @@ An example how you can load data from Mendix into R:
     * During import ignore csv columns which cannot be mapped 
     * Added support for importing multiline strings, if using double quotes
     * Introduced strict mode for importing data
+    
+  * 2.2
+  
+    * Support for tab delimited values
+    * Microflow activity to read csv files from url
+    * Support for gzipped url served csv files
+    * Ability to provide an alternative header (to rename columns)
+    * Configuration to specify the maxiumum number of records to import
+    * Upgrade to mendix 7.23.8
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png

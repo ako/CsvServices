@@ -11,6 +11,16 @@ public class UserActionsRegistrar
     registrator.registerUserAction(csvservices.actions.ExportCsvData.class);
     registrator.registerUserAction(csvservices.actions.ImportCsvData.class);
     registrator.registerUserAction(csvservices.actions.ImportCsvResourceData.class);
+    registrator.registerUserAction(csvservices.actions.ImportCsvUrlData.class);
+    registrator.registerUserAction(mxdbutils.actions.DeleteEntitiesDirectly.class);
+    registrator.registerUserAction(mxdbutils.actions.ExecuteDatabaseUpdateStatement.class);
+    registrator.registerUserAction(mxdbutils.actions.ExecuteMicroflowInSeparateTransaction.class);
+    registrator.registerUserAction(mxdbutils.actions.ExecuteMicroflowInSystemContext.class);
+    registrator.registerUserAction(mxdbutils.actions.ExecuteQuery.class);
+    registrator.registerUserAction(mxdbutils.actions.GetDatabaseInformation.class);
+    registrator.registerUserAction(mxdbutils.actions.LockObject.class);
+    registrator.registerUserAction(mxdbutils.actions.TruncateEntity.class);
+    registrator.registerUserAction(mxdbutils.actions.Vacuum.class);
     registrator.registerUserAction(system.actions.VerifyPassword.class);
   }
 }

@@ -1,0 +1,23 @@
+{
+    "sqltools.connections": [
+        {
+            "connectionTimeout": 30,
+            "database": "xe",
+            "dialect": "OracleDB",
+            "name": "ORAXE",
+            "password": "manager",
+            "port": 1521,
+            "server": "127.0.0.1",
+            "username": "system"
+        },
+        {
+            "database": "mxdev3",
+            "dialect": "PostgreSQL",
+            "name": "mxdev3",
+            "password": "mendix",
+            "port": 5432,
+            "server": "localhost",
+            "username": "mendix"
+        }
+    ]
+}
