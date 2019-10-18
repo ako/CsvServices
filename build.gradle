@@ -49,7 +49,7 @@ sourceSets {
     }
 }
 
-task getExportlibs(type: Copy) {
+task getExportLibs(type: Copy) {
     doFirst {
         delete fileTree(dir: "userlib")
     }
@@ -75,7 +75,7 @@ task exportModule(type: Exec, dependsOn: 'getExportLibs'){
         copy {
             from 'DIST'
             include 'CsvServices.mpk'
-            destinationDir 'DIST/'
+            into 'DIST'
             rename 'CsvServices.mpk', 'CsvServices-2.2.mpk'
         }
     }
