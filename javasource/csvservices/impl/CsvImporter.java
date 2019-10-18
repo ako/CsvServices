@@ -37,7 +37,7 @@ public class CsvImporter {
     /*
      * Create new entities for uploaded stuff
      */
-    public void csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream, Boolean strict, int maxRecords, Boolean hasHeader, String alternativeHeader) throws IOException {
+    public int csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream, Boolean strict, int maxRecords, Boolean hasHeader, String alternativeHeader) throws IOException {
         IContext ctx = null;
         logger.info(String.format("csvToEntities: %s.%s", moduleName, entityName));
 
@@ -313,6 +313,7 @@ public class CsvImporter {
         logger.info("objects created: " + objNo);
         JSONObject response = new JSONObject();
         response.put("lines_processed", lineNo);
+        response.put("objects_created" , objNo);
         if (errorMessages.length() == 0) {
             response.put("status", "successfully created objects");
         } else {
@@ -332,6 +333,7 @@ public class CsvImporter {
             logger.error(e.getMessage());
         }
         writer.write(responseString);
+        return objNo;
     }
 
     private Object toDateValue(String value, Format attributeFormatter) {

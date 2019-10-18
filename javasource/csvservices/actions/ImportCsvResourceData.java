@@ -15,29 +15,36 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvServicesImpl;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.StringWriter;
 import java.util.Arrays;
 
-public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
-{
-	private java.lang.String Entity;
-	private java.lang.String CsvResourcePath;
+public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long> {
+    private java.lang.String Entity;
+    private java.lang.String CsvResourcePath;
+    private java.lang.Long MaxRecords;
+    private java.lang.Boolean HasHeader;
+    private java.lang.String AlternativeHeader;
 
-	public ImportCsvResourceData(IContext context, java.lang.String Entity, java.lang.String CsvResourcePath)
-	{
-		super(context);
-		this.Entity = Entity;
-		this.CsvResourcePath = CsvResourcePath;
-	}
+    public ImportCsvResourceData(IContext context, java.lang.String Entity, java.lang.String CsvResourcePath, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader) {
+        super(context);
+        this.Entity = Entity;
+        this.CsvResourcePath = CsvResourcePath;
+        this.MaxRecords = MaxRecords;
+        this.HasHeader = HasHeader;
+        this.AlternativeHeader = AlternativeHeader;
+    }
 
-	@java.lang.Override
-	public java.lang.Long executeAction() throws Exception
-	{
-		// BEGIN USER CODE
+    @java.lang.Override
+    public java.lang.Long executeAction() throws Exception {
+        // BEGIN USER CODE
         logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
-
+        Long objectsCreated = 0L;
+        if (this.MaxRecords == null) {
+            this.MaxRecords = new Long(-1);
+        }
         CsvImporter csvImporter = new CsvImporter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
@@ -46,25 +53,24 @@ public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
         try (FileInputStream fis = new FileInputStream(myFile);
              StringWriter outputWriter = new StringWriter()
         ) {
-            csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, fis,false,-1, true, null);
+            objectsCreated = new Long(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, fis, false, this.MaxRecords.intValue(), this.HasHeader, this.AlternativeHeader));
             logger.info("Done importing: " + outputWriter.toString());
 
         }
-        return 0L;
-		// END USER CODE
-	}
+        return objectsCreated;
+        // END USER CODE
+    }
 
-	/**
-	 * Returns a string representation of this action
-	 */
-	@java.lang.Override
-	public java.lang.String toString()
-	{
-		return "ImportCsvResourceData";
-	}
+    /**
+     * Returns a string representation of this action
+     */
+    @java.lang.Override
+    public java.lang.String toString() {
+        return "ImportCsvResourceData";
+    }
 
-	// BEGIN EXTRA CODE
-	private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
+    // BEGIN EXTRA CODE
+    private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
 
-	// END EXTRA CODE
+    // END EXTRA CODE
 }

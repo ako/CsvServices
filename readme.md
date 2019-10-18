@@ -1,6 +1,9 @@
 # Csv Services
 
-Mendix module that creates a rest endpoint for all entities supporting csv data format. Basically a Excel Exporter, Excel Importer meets Rest services. This enables you to automate csv export and import using script, reducing the number of manual actions required.
+Mendix module to easily import and export csv files. It provides:
+ * A rest endpoint for all entities supporting csv data format. Basically a Excel Exporter, Excel Importer meets Rest services. This enables you to automate csv export and import using script, reducing the number of manual actions required.
+ * Microflow activities to import and export csv data.
+ * Support for comma, semicolon, and tab delimited data, both single line and multiline.
 
 Currently this serves 2 main use cases:
 
@@ -111,6 +114,9 @@ Alternatively you can read the csv file from your resources folder:
 
  ![Import csv resource microflow action][5]
  
+There is also a microflow action to import csv data from a url:
+
+ ![Import csv from url microflow action][6]
  
 ### Export CSV
 
@@ -187,13 +193,13 @@ An example how you can load data from Mendix into R:
     * Added support for importing multiline strings, if using double quotes
     * Introduced strict mode for importing data
     
-  * 2.2
+  * 2.2 (2019-10-18)
   
     * Support for tab delimited values
-    * Microflow activity to read csv files from url
+    * New microflow activity, ImportCsvUrlData, to read csv files from url
     * Support for gzipped url served csv files
     * Ability to provide an alternative header (to rename columns)
-    * Configuration to specify the maxiumum number of records to import
+    * Configuration to specify the maximum number of records to import
     * Upgrade to mendix 7.23.8
     
  [1]: docs/csv-import-mf-action.png
@@ -201,3 +207,4 @@ An example how you can load data from Mendix into R:
  [3]: docs/csv-import-resource-mf-action.png
  [4]: docs/csv-import-resource-configuration.png
  [5]: docs/csv-import-resource-model.png
+ [6]: docs/csv-import-from-url.png
