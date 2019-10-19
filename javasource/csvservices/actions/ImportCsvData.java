@@ -15,31 +15,33 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvServicesImpl;
-
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class ImportCsvData extends CustomJavaAction<java.lang.Long> {
-    private java.lang.String Entity;
-    private java.lang.String CsvData;
-    private java.lang.Long MaxRecords;
-    private java.lang.Boolean HasHeader;
-    private java.lang.String AlternativeHeader;
+public class ImportCsvData extends CustomJavaAction<java.lang.Long>
+{
+	private java.lang.String Entity;
+	private java.lang.String CsvData;
+	private java.lang.Long MaxRecords;
+	private java.lang.Boolean HasHeader;
+	private java.lang.String AlternativeHeader;
 
-    public ImportCsvData(IContext context, java.lang.String Entity, java.lang.String CsvData, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader) {
-        super(context);
-        this.Entity = Entity;
-        this.CsvData = CsvData;
-        this.MaxRecords = MaxRecords;
-        this.HasHeader = HasHeader;
-        this.AlternativeHeader = AlternativeHeader;
-    }
+	public ImportCsvData(IContext context, java.lang.String Entity, java.lang.String CsvData, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader)
+	{
+		super(context);
+		this.Entity = Entity;
+		this.CsvData = CsvData;
+		this.MaxRecords = MaxRecords;
+		this.HasHeader = HasHeader;
+		this.AlternativeHeader = AlternativeHeader;
+	}
 
-    @java.lang.Override
-    public java.lang.Long executeAction() throws Exception {
-        // BEGIN USER CODE
+	@java.lang.Override
+	public java.lang.Long executeAction() throws Exception
+	{
+		// BEGIN USER CODE
         logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
         Long objectsCreated = 0l;
         CsvImporter csvImporter = new CsvImporter();
@@ -53,19 +55,20 @@ public class ImportCsvData extends CustomJavaAction<java.lang.Long> {
         logger.info("Done importing: " + outputWriter.toString());
         outputWriter.close();
         return objectsCreated;
-        // END USER CODE
-    }
+		// END USER CODE
+	}
 
-    /**
-     * Returns a string representation of this action
-     */
-    @java.lang.Override
-    public java.lang.String toString() {
-        return "ImportCsvData";
-    }
+	/**
+	 * Returns a string representation of this action
+	 */
+	@java.lang.Override
+	public java.lang.String toString()
+	{
+		return "ImportCsvData";
+	}
 
-    // BEGIN EXTRA CODE
+	// BEGIN EXTRA CODE
     private static ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
 
-    // END EXTRA CODE
+	// END EXTRA CODE
 }

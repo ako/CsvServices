@@ -116,6 +116,7 @@ public class CsvImporter {
                         // in case it's an implicit set (as specified by the data)
                         attributeFKSSeparator[i] = ";";
                     }
+                    logger.debug(String.format("Is key set: %s. %b, separator: %s", attributeNames[i],attributeIsFKS[i],attributeFKSSeparator[i]));
                     // remove double quotes at start and end
                     attributeNames[i] = attributeNames[i].replaceAll("^\"|\"$", "");
                     // check if has formatting specified
@@ -128,6 +129,7 @@ public class CsvImporter {
                     logger.debug("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
                 }
                 if (hasHeader) {
+                    logger.debug("skipping first line for processing, was header line");
                     lineNo++;
                     line = "";
                     continue;
@@ -145,6 +147,7 @@ public class CsvImporter {
                 String objectConstraint = "";
                 if (entityHasPk) {
                     // test if object already exists, get object
+
                     for (int i = 0; i < attributeNames.length; i++) {
                         if (attributeIsPK[i]) {
                             IMetaPrimitive metaPrimitive = Core.getMetaObject(moduleName + "." + entityName).getMetaPrimitive(attributeNames[i]);
@@ -166,6 +169,7 @@ public class CsvImporter {
                     String findByPkXpath = "//" + moduleName + "." + entityName + "[" + objectConstraint + " (1 = 1)]";
                     logger.debug("find by pk constraint: " + findByPkXpath);
                     try {
+                        // TODO replace by createXpathQuery
                         List<IMendixObject> objects = Core.retrieveXPathQuery(ctx, findByPkXpath);
                         if (objects.size() > 0) {
                             object = objects.get(0);
@@ -209,9 +213,11 @@ public class CsvImporter {
                                 List<IMendixIdentifier> ids = new ArrayList();
                                 for (int ri = 0; ri < refs.length; ri++) {
                                     logger.debug("ref: " + refs[ri]);
-                                    String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], refs[ri]);
+                                    String xpath = String.format("//%s[%s=$param]", assoc.getChild().getName(), refInfo[1]);
                                     logger.debug("xpath = " + xpath);
-                                    List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
+                                    List<IMendixObject> refObjectList = Core.createXPathQuery(xpath)
+                                            .setVariable("param",refs[ri])
+                                            .execute(context);
                                     if (refObjectList.size() == 1) {
                                         logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
                                         ids.add(refObjectList.get(0).getId());
@@ -225,10 +231,15 @@ public class CsvImporter {
                             } else {
                                 // reference
                                 if (values[i] != null && !values[i].equals("")) {
-                                    String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
-                                    logger.debug("reference xpath: " + xpath);
+                                    String xpath = String.format("//%s[%s=$param]", assoc.getChild().getName(), refInfo[1]);
+                                    logger.debug("reference xpath = " + xpath);
+                                    //String xpath = String.format("//%s[%s=%s]", assoc.getChild().getName(), refInfo[1], values[i]);
+                                    //logger.debug("reference xpath: " + xpath);
                                     try {
-                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
+                                        List<IMendixObject> refObjectList = Core.createXPathQuery(xpath)
+                                                .setVariable("param",values[i])
+                                                .execute(context);
+//                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
                                         if (refObjectList.size() != 0) {
                                             logger.debug("references obj id: " + refObjectList.get(0).getId().toLong());
                                             object.setValue(ctx, assoc.getName(), refObjectList.get(0).getId());
