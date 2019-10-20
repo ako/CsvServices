@@ -206,6 +206,7 @@ An example how you can load data from Mendix into R:
   
     * Fixed rest handler
     * Fixed batch commits
+    * Fixed retrieval of associations
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
