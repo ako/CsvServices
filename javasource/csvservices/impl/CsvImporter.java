@@ -51,11 +51,12 @@ public class CsvImporter {
         Format[] attributeFormatters = null;
         Boolean[] attributeIsPK = null;
         Boolean[] attributeIsFKS = null;
-        String[] attributeFKSSeparator =null;
+        String[] attributeFKSSeparator = null;
         Boolean entityHasPk = false;
         JSONArray errorMessages = new JSONArray();
         String nextLine = null;
 
+        context.endTransaction();
         ctx = context.createClone();
         ctx.startTransaction();
         while ((nextLine = bufferedReader.readLine()) != null) {
@@ -79,8 +80,8 @@ public class CsvImporter {
                 if (alternativeHeader != null) {
                     headerLine = alternativeHeader;
                 }
-                logger.info("Using headerline: "+ headerLine);
-                    // Determine what delimiter is used
+                logger.info("Using headerline: " + headerLine);
+                // Determine what delimiter is used
                 if (headerLine.contains("\t")) {
                     csvSplitter = "\t" + csvSplitter;
                     logger.info("Using tabs as field separator");
@@ -109,14 +110,14 @@ public class CsvImporter {
                     // check if attribute is set of foreign keys
                     attributeFKSSeparator[i] = ";";
                     attributeIsFKS[i] = attributeNames[i].startsWith("[");
-                    if ( attributeIsFKS[i] ){
+                    if (attributeIsFKS[i]) {
                         attributeFKSSeparator[i] = attributeNames[i].substring(attributeNames[i].length() - 2, attributeNames[i].length() - 1);
-                        attributeNames[i] = attributeNames[i].substring(1, attributeNames[i].length()-2);
+                        attributeNames[i] = attributeNames[i].substring(1, attributeNames[i].length() - 2);
                     } else {
                         // in case it's an implicit set (as specified by the data)
                         attributeFKSSeparator[i] = ";";
                     }
-                    logger.debug(String.format("Is key set: %s. %b, separator: %s", attributeNames[i],attributeIsFKS[i],attributeFKSSeparator[i]));
+                    logger.debug(String.format("Is key set: %s. %b, separator: %s", attributeNames[i], attributeIsFKS[i], attributeFKSSeparator[i]));
                     // remove double quotes at start and end
                     attributeNames[i] = attributeNames[i].replaceAll("^\"|\"$", "");
                     // check if has formatting specified
@@ -205,7 +206,7 @@ public class CsvImporter {
                              * check if reference set
                              */
 
-                            if ( attributeIsFKS[i]
+                            if (attributeIsFKS[i]
                                     || (values[i].startsWith("[") && values[i].endsWith("]"))) {
                                 // reference set
                                 String[] refs = values[i].replaceAll("^\\[|\\]$", "").split(attributeFKSSeparator[i]);
@@ -216,7 +217,7 @@ public class CsvImporter {
                                     String xpath = String.format("//%s[%s=$param]", assoc.getChild().getName(), refInfo[1]);
                                     logger.debug("xpath = " + xpath);
                                     List<IMendixObject> refObjectList = Core.createXPathQuery(xpath)
-                                            .setVariable("param",refs[ri])
+                                            .setVariable("param", refs[ri])
                                             .execute(context);
                                     if (refObjectList.size() == 1) {
                                         logger.debug("ref object uuid: " + refObjectList.get(0).getId().toLong());
@@ -237,7 +238,7 @@ public class CsvImporter {
                                     //logger.debug("reference xpath: " + xpath);
                                     try {
                                         List<IMendixObject> refObjectList = Core.createXPathQuery(xpath)
-                                                .setVariable("param",values[i])
+                                                .setVariable("param", values[i])
                                                 .execute(context);
 //                                        List<IMendixObject> refObjectList = Core.retrieveXPathQuery(ctx, xpath);
                                         if (refObjectList.size() != 0) {
@@ -315,16 +316,18 @@ public class CsvImporter {
             if (objNo % 100 == 0) {
                 logger.info("Commiting up to object: " + objNo);
                 ctx.endTransaction();
+
                 ctx = context.createClone();
                 ctx.startTransaction();
             }
         }
         ctx.endTransaction();
+        context.startTransaction();
 
         logger.info("objects created: " + objNo);
         JSONObject response = new JSONObject();
         response.put("lines_processed", lineNo);
-        response.put("objects_created" , objNo);
+        response.put("objects_created", objNo);
         if (errorMessages.length() == 0) {
             response.put("status", "successfully created objects");
         } else {

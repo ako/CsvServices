@@ -202,9 +202,10 @@ An example how you can load data from Mendix into R:
     * Configuration to specify the maximum number of records to import
     * Upgrade to mendix 7.23.8
   
-  * 2.2.1 (2019-10-18)
+  * 2.2.1 (2019-10-20)
   
     * Fixed rest handler
+    * Fixed batch commits
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
