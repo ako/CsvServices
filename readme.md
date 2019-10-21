@@ -118,6 +118,20 @@ by _sed_ or something similar if you need to transform the data before importing
        -H "Content-type: text/csv" \ 
        -X POST http://localhost:8080/csv/Tests2/Products_2 --data-binary @-
        
+This example used sed to replace the , delimiter of the source file with ^ and then load it into the target entity:
+
+    curl --verbose -H "Accept: text/csv"  \
+      -X GET http://localhost:8080/csv/Tests2/Products \
+      | sed 's/,/\^/g' \
+      | curl --verbose \
+          -H "X-Alternative-Header: -Id^-Products_Category^ProductID*^Description^Name" \
+          -H "X-Has-Header: true"  \
+          -H "X-Max-Records: -1" \
+          -H "X-Delimiter: \^" \
+          -H "Content-type: text/csv" \
+          -X POST http://localhost:8080/csv/Tests2/Products_2 --data-binary @-
+       
+       
 ### Import CSV data using Microflow actions
 
 As of version 1.2 you can also import csv data from microflow actions. You can provide the entire csv document as a string parameter to the 

@@ -152,6 +152,9 @@ public class CsvImporter {
             IMendixObject object = null;
             try {
                 String[] values = line.split(csvSplitter);
+                for(int i=0;i<values.length;i++){
+                    values[i] = values[i].trim().replaceAll("^\"|\"$", "");
+                }
                 String objectConstraint = "";
                 if (entityHasPk) {
                     // test if object already exists, get object
@@ -188,6 +191,7 @@ public class CsvImporter {
                     }
                 }
                 if (object == null) {
+                    logger.debug("instatiating object, no-pre-existing object found");
                     try {
                         object = Core.instantiate(ctx, moduleName + "." + entityName);
                     } catch (Exception e) {
@@ -198,7 +202,7 @@ public class CsvImporter {
                 }
                 for (int i = 0; i < values.length; i++) {
                     try {
-                        values[i] = values[i].trim();
+                        //values[i] = values[i].trim().replaceAll("^\"|\"$", "");
                         logger.debug(String.format("value: %s = %s", attributeNames[i], values[i]));
                         // skip value if attribute should be ignored
                         if(ignoreAttribute[i]){
@@ -288,7 +292,7 @@ public class CsvImporter {
                                 if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
                                     object.setValue(ctx, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
                                 } else {
-                                    object.setValue(ctx, attributeNames[i], values[i].replaceAll("^\"|\"$", ""));
+                                    object.setValue(ctx, attributeNames[i], values[i]);
                                 }
                             } catch (Exception e) {
                                 logger.debug(String.format("Attribute %s cannot be set", attributeNames[i]));
