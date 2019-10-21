@@ -99,6 +99,25 @@ The test-data folder contains an example for the Orders module, load-data.sh:
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/Orders --data-binary "@orders-data.csv"
     curl -v -X POST -H "Content-Type: text/csv" http://MxAdmin:1@localhost:8080/csv/Orders/OrderLines --data-binary "@orderlines-data.csv"
 
+#### Copying data from one entity to another
+
+The following example illustrates how you can use a small shell script to copy objects from one entity to another.
+The ability to specify an alternative header is used to ignore 2 attributes (Id and Products_Category). The alternative header
+also indicates which attribute should be treated as a unique id attribute.
+
+The approach can be used to copy/migrate data from one application to another. You can replace the _cat_ command 
+by _sed_ or something similar if you need to transform the data before importing it in the destination app.  
+
+    curl --verbose -H "Accept: text/csv"  -X GET http://localhost:8080/csv/Tests2/Products \
+     | cat - \ 
+     | curl --verbose \
+       -H "X-Alternative-Header: -Id,-Products_Category,ProductID*,Description,Name" \
+       -H "X-Has-Header: true" \
+       -H "X-Max-Records: -1" \
+       -H "X-Delimiter: ," \
+       -H "Content-type: text/csv" \ 
+       -X POST http://localhost:8080/csv/Tests2/Products_2 --data-binary @-
+       
 ### Import CSV data using Microflow actions
 
 As of version 1.2 you can also import csv data from microflow actions. You can provide the entire csv document as a string parameter to the 
@@ -207,6 +226,11 @@ An example how you can load data from Mendix into R:
     * Fixed rest handler
     * Fixed batch commits
     * Fixed retrieval of associations
+    
+  * 2.3 (2019-10-21)
+  
+    * Configurable delimiter for csv import actions
+    * Http headers to configure upload of data through the REST endpoint
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png

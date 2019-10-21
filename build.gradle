@@ -76,7 +76,7 @@ task exportModule(type: Exec, dependsOn: 'getExportLibs'){
             from 'DIST'
             include 'CsvServices.mpk'
             into 'DIST'
-            rename 'CsvServices.mpk', 'CsvServices-2.2.1.mpk'
+            rename 'CsvServices.mpk', 'CsvServices-2.3-SNAPSHOT.mpk'
         }
     }
 }

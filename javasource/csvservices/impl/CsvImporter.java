@@ -37,7 +37,7 @@ public class CsvImporter {
     /*
      * Create new entities for uploaded stuff
      */
-    public int csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream, Boolean strict, int maxRecords, Boolean hasHeader, String alternativeHeader) throws IOException {
+    public int csvToEntities(IContext context, Writer writer, String moduleName, String entityName, InputStream inputStream, Boolean strict, int maxRecords, Boolean hasHeader, String alternativeHeader, String delimiter) throws IOException {
         IContext ctx = null;
         logger.info(String.format("csvToEntities: %s.%s", moduleName, entityName));
 
@@ -53,6 +53,7 @@ public class CsvImporter {
         Boolean[] attributeIsFKS = null;
         String[] attributeFKSSeparator = null;
         Boolean entityHasPk = false;
+        Boolean[] ignoreAttribute = null;
         JSONArray errorMessages = new JSONArray();
         String nextLine = null;
 
@@ -82,7 +83,9 @@ public class CsvImporter {
                 }
                 logger.info("Using headerline: " + headerLine);
                 // Determine what delimiter is used
-                if (headerLine.contains("\t")) {
+                if ( delimiter != null ) {
+                    csvSplitter = delimiter + csvSplitter;
+                } else if (headerLine.contains("\t")) {
                     csvSplitter = "\t" + csvSplitter;
                     logger.info("Using tabs as field separator");
                 } else if (headerLine.contains(";")) {
@@ -99,6 +102,8 @@ public class CsvImporter {
                 attributeIsPK = new Boolean[attributeNames.length];
                 attributeIsFKS = new Boolean[attributeNames.length];
                 attributeFKSSeparator = new String[attributeNames.length];
+                ignoreAttribute = new Boolean[attributeNames.length];
+
                 for (int i = 0; i < attributeNames.length; i++) {
                     attributeNames[i] = attributeNames[i].trim();
                     // check if attribute is part of primary key
@@ -107,6 +112,8 @@ public class CsvImporter {
                         entityHasPk = true;
                         attributeNames[i] = attributeNames[i].replace("*", "");
                     }
+                    // check if attribute should be ignored
+                    ignoreAttribute[i] = attributeNames[i].startsWith("-");
                     // check if attribute is set of foreign keys
                     attributeFKSSeparator[i] = ";";
                     attributeIsFKS[i] = attributeNames[i].startsWith("[");
@@ -127,7 +134,7 @@ public class CsvImporter {
                         attributeNames[i] = attributeNames[i].substring(0, attributeNames[i].indexOf("("));
                         attributeFormatters[i] = new SimpleDateFormat(attributeFormats[i]);
                     }
-                    logger.debug("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i]);
+                    logger.debug("attribute: " + attributeNames[i] + ", format: " + attributeFormats[i] + ", ignore: " + ignoreAttribute[i] );
                 }
                 if (hasHeader) {
                     logger.debug("skipping first line for processing, was header line");
@@ -193,6 +200,11 @@ public class CsvImporter {
                     try {
                         values[i] = values[i].trim();
                         logger.debug(String.format("value: %s = %s", attributeNames[i], values[i]));
+                        // skip value if attribute should be ignored
+                        if(ignoreAttribute[i]){
+                            logger.debug("skipping attribute: " + attributeNames[i]);
+                            continue;
+                        }
                         /*
                          * check if reference
                          */

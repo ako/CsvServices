@@ -28,8 +28,9 @@ public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
 	private java.lang.Long MaxRecords;
 	private java.lang.Boolean HasHeader;
 	private java.lang.String AlternativeHeader;
+	private java.lang.String Delimiter;
 
-	public ImportCsvUrlData(IContext context, java.lang.String Entity, java.lang.String CsvUrl, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader)
+	public ImportCsvUrlData(IContext context, java.lang.String Entity, java.lang.String CsvUrl, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader, java.lang.String Delimiter)
 	{
 		super(context);
 		this.Entity = Entity;
@@ -37,6 +38,7 @@ public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
 		this.MaxRecords = MaxRecords;
 		this.HasHeader = HasHeader;
 		this.AlternativeHeader = AlternativeHeader;
+		this.Delimiter = Delimiter;
 	}
 
 	@java.lang.Override
@@ -60,7 +62,7 @@ public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
                 is = csvUrl.openStream();
             }
             try (StringWriter outputWriter = new StringWriter()) {
-                objectsCreated = new Long(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, is, false, this.MaxRecords.intValue(), this.HasHeader, this.AlternativeHeader));
+                objectsCreated = new Long(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, is, false, this.MaxRecords.intValue(), this.HasHeader, this.AlternativeHeader, this.Delimiter));
                 logger.info("Done importing: " + outputWriter.toString());
             }
         } catch (Exception e) {
