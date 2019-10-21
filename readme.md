@@ -3,7 +3,7 @@
 Mendix module to easily import and export csv files. It provides:
  * A rest endpoint for all entities supporting csv data format. Basically a Excel Exporter, Excel Importer meets Rest services. This enables you to automate csv export and import using script, reducing the number of manual actions required.
  * Microflow activities to import and export csv data.
- * Support for comma, semicolon, and tab delimited data, both single line and multiline.
+ * Support for comma, semicolon, tab, and configurable delimited data, both single line and multiline.
 
 Currently this serves 2 main use cases:
 
