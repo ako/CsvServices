@@ -252,3 +252,5 @@ An example how you can load data from Mendix into R:
  [4]: docs/csv-import-resource-configuration.png
  [5]: docs/csv-import-resource-model.png
  [6]: docs/csv-import-from-url.png
+ 
+ test
