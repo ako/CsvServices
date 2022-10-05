@@ -34,7 +34,7 @@ dependencies {
 repositories {
     mavenCentral()
     flatDir {
-        dirs '/c://Program Files/Mendix/7.23.3.48173/runtime/bundles'
+        dirs '/c://Program Files/Mendix/9.18.0.53394/runtime/bundles'
     }
 }
 
@@ -65,18 +65,18 @@ task getExportLibs(type: Copy) {
 }
 
 task getTestRuntimelibs(type: Copy) {
-    from configurations.testRuntime
-    into 'userlib/'
+//    from configurations.testRuntime
+//    into 'userlib/'
 }
 
 task exportModule(type: Exec, dependsOn: 'getExportLibs'){
-    commandLine "\\Program Files\\Mendix\\7.23.8.58888\\modeler\\mxutil.exe", "create-module-package", "CsvServices.mpr", "CsvServices", "--package-dir=DIST"
+    commandLine "\\Program Files\\Mendix\\9.18.0.53394\\modeler\\mxutil.exe", "create-module-package", "CsvServices.mpr", "CsvServices", "--package-dir=DIST"
     doLast {
         copy {
             from 'DIST'
             include 'CsvServices.mpk'
             into 'DIST'
-            rename 'CsvServices.mpk', 'CsvServices-2.3.mpk'
+            rename 'CsvServices.mpk', 'CsvServices-2.4.mpk'
         }
     }
 }

@@ -245,6 +245,10 @@ An example how you can load data from Mendix into R:
   
     * Configurable delimiter for csv import actions
     * Http headers to configure upload of data through the REST endpoint
+
+  * 2.4 (2022-09-21)
+ 
+    * Upgrade to Mendix 9.18
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
