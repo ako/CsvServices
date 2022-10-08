@@ -150,6 +150,10 @@ Alternatively you can read the csv file from your resources folder:
 There is also a microflow action to import csv data from a url:
 
  ![Import csv from url microflow action][6]
+
+You can also import a csv file from a zip url:
+
+ ![Import csv from zip url microflow action][7]
  
 ### Export CSV
 
@@ -246,9 +250,10 @@ An example how you can load data from Mendix into R:
     * Configurable delimiter for csv import actions
     * Http headers to configure upload of data through the REST endpoint
 
-  * 2.4 (2022-09-21)
+  * 2.4 (2022-10-10)
  
     * Upgrade to Mendix 9.18
+    * Read specific file from zip url
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
@@ -256,3 +261,4 @@ An example how you can load data from Mendix into R:
  [4]: docs/csv-import-resource-configuration.png
  [5]: docs/csv-import-resource-model.png
  [6]: docs/csv-import-from-url.png
+ [7]: docs/import-zip.png

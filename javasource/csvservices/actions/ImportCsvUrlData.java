@@ -15,11 +15,20 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvServicesImpl;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
 {
@@ -58,6 +67,24 @@ public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
         try {
             if (this.CsvUrl.endsWith(".gz") || this.CsvUrl.endsWith(".gzip")) {
                 is = new GZIPInputStream(csvUrl.openStream());
+            } else if (this.CsvUrl.contains(".zip#")){
+                // reading specific file from zip
+                String fileName = this.CsvUrl.substring(this.CsvUrl.indexOf(".zip#") + 5);
+                ZipInputStream zis = new ZipInputStream(csvUrl.openStream());
+                ZipEntry ze = zis.getNextEntry();
+                while(ze != null){
+                    String name = ze.getName();
+                    System.out.println(String.format("entry: %s",name));
+                    if(name.equals(fileName)){
+                        System.out.println("found entry");
+                        is = zis;
+                        break;
+                    }
+                    ze = zis.getNextEntry();
+                }
+                if(is == null){
+                    throw new FileNotFoundException(String.format("Zipfile not found: %s in %s",fileName,csvUrl));
+                }
             } else {
                 is = csvUrl.openStream();
             }
