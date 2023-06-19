@@ -46,9 +46,7 @@ public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
 		// BEGIN USER CODE
         logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
         Long objectsCreated = 0L;
-        if (this.MaxRecords == null) {
-            this.MaxRecords = new Long(-1);
-        }
+		int maxRecords = (this.MaxRecords == null) ? -1 : this.MaxRecords.intValue();
         CsvImporter csvImporter = new CsvImporter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
@@ -57,7 +55,7 @@ public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
         try (FileInputStream fis = new FileInputStream(myFile);
              StringWriter outputWriter = new StringWriter()
         ) {
-            objectsCreated = new Long(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, fis, false, this.MaxRecords.intValue(), this.HasHeader, this.AlternativeHeader, this.Delimiter));
+            objectsCreated = Long.valueOf(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, fis, false, maxRecords, this.HasHeader, this.AlternativeHeader, this.Delimiter));
             logger.info("Done importing: " + outputWriter.toString());
 
         }

@@ -1,19 +1,11 @@
+//import csvservices.impl.DataGenerator;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.zip.GZIPInputStream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+import org.junit.jupiter.api.Assertions;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class Test1 {
@@ -21,7 +13,7 @@ public class Test1 {
     public void myFirstTest() {
         //
         System.out.println("HelloWorld!");
-        assertEquals(1, 1);
+        Assertions.assertEquals(1, 1);
     }
 
     @Test
@@ -77,4 +69,26 @@ public class Test1 {
         System.out.println("< testZip2");
          */
     }
+
+    @Test
+    public void testParseDate1() throws Exception {
+        String myDate1 = "+01:23:22.123";
+        DateTimeFormatter parser = DateTimeFormatter.ofPattern("['+']hh:mm:ss.SSS", Locale.ENGLISH);
+        // LocalDate date1 = LocalDate.parse(myDate1,parser);
+
+    }
+
+    @Test
+    public void testParseDate2() throws Exception {
+        String myDate2 = "3:22.123";
+        SimpleDateFormat parser = new SimpleDateFormat("[hh:]mm:ss.SSS");
+        // Date date2 = parser.parse(myDate2);
+    }
+
+//    @Test
+//    public void testDataGenerator() {
+//        DataGenerator dg = new DataGenerator();
+//        String data = dg.generate("String;String", 10, ";");
+//        System.out.println(data);
+//    }
 }

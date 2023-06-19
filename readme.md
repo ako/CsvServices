@@ -160,7 +160,55 @@ You can also import a csv file from a zip url:
 Use the GET operation to export all objects of an entity:
 
     curl -v -X GET http://MxAdmin:1@localhost:8080/csv/Orders/ProductLabels
+
+### Fake data generation
+
+The *Generation data* activity can be used to generate csv files with fake random data for testing purposes. 
+It uses the [data faker library][https://www.datafaker.net/], which has a large number of providers to generate all sorts of data. 
+For an overview see the [providers documentation][https://www.datafaker.net/].
+
+![Fake data generation][8]
+
+An additional provider has been added to generate sequence numbers for id attributes: sequenceNumber.next. 
+
+For example:
+
+Employee records, first a header line (for readability you can separate the fields on different lines), then the expressions for the column data:
+
+    'EmployeeId*;
+    Firstname;
+    Lastname;
+    DateOfBirth;
+    CountryOfBirth'
     
+    '#{sequenceNumber.next ''''EmpId''''};
+    #{Name.last_name};
+    #{Name.last_name};
+    #{Date.birthday ''''15'''',''''67''''};
+    #{Country.Name}'
+   
+Address records, first the header line, then the column expressions:
+
+    'AddressId*;
+    Address_Employees.EmployeeId;
+    Street;
+    HouseNumber;
+    Zipcode;
+    City;
+    Country;
+    PhoneNumber;
+    AddressType'
+
+    '#{sequenceNumber.next ''''AddressId''''};
+    #{Number.numberBetween ''''1'''',''''2000''''};
+    #{Address.streetAddress};
+    #{Address.streetAddressNumber};
+    #{Address.zipCode};
+    #{Address.city};
+    #{Address.country};
+    #{PhoneNumber.phoneNumber};
+    #{options.option ''''Home'''',''''Work''''}'
+
 ### Security
 
 When enabling this module, endpoints are available for *all* entities in your application. 
@@ -254,6 +302,10 @@ An example how you can load data from Mendix into R:
  
     * Upgrade to Mendix 9.18
     * Read specific file from zip url
+
+  * 2.5 (2023-06-14)
+    * Upgrade to Mendix 9.24
+    * Fake data generator activity
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png
@@ -262,3 +314,4 @@ An example how you can load data from Mendix into R:
  [5]: docs/csv-import-resource-model.png
  [6]: docs/csv-import-from-url.png
  [7]: docs/import-zip.png
+ [8]: docs/data-generator.png

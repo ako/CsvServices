@@ -37,15 +37,13 @@ public class ExportCsvData extends CustomJavaAction<java.lang.String>
 	{
 		// BEGIN USER CODE
         logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
-        if (this.Delimiter == null){
-        	this.Delimiter = ",";
-		}
+		String delimiter = (this.Delimiter == null) ? "," : this.Delimiter;
         CsvExporter csvExporter = new CsvExporter();
         StringWriter outputWriter = new StringWriter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
 
-        csvExporter.entityToCsv(getContext(), outputWriter, moduleName, entityName,this.Delimiter);
+        csvExporter.entityToCsv(getContext(), outputWriter, moduleName, entityName,delimiter);
         logger.info("Done exporting: " + outputWriter.toString());
         String result = outputWriter.toString();
         outputWriter.close();

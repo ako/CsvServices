@@ -80,7 +80,7 @@ public class CsvRestHandler extends RequestHandler {
                     parMaxRecords = iMxRuntimeRequest.getHttpServletRequest().getIntHeader("X-Max-Records");
                 }
                 if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header") != null) {
-                    parHasHeader = new Boolean(iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header"));
+                    parHasHeader =  Boolean.valueOf(iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header"));
                 }
                 if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header") != null) {
                     parAlternativeHeader = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header");

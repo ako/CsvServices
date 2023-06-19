@@ -11,7 +11,7 @@ compileJava.destinationDirectory = file("$rootDir/deployment/run/bin")
 repositories {
     mavenCentral()
     flatDir {
-        dirs '/c://Program Files/Mendix/9.18.0.53394/runtime/bundles'
+        dirs '/c://Program Files/Mendix/9.24.3.8044/runtime/bundles'
     }
 }
 
@@ -29,13 +29,17 @@ dependencies {
     implementation name: 'com.mendix.json'
     implementation name: 'com.mendix.logging-api'
     implementation name: 'com.mendix.m2ee-api'
-    implementation name: 'javax.servlet-api.servlet'
+    implementation name: 'javax.servlet.servlet-api'
+    implementation group: 'net.datafaker', name: 'datafaker', version: '1.9.0'
 
     // test
+    //implementation("org.junit.jupiter:junit-jupiter:5.9.1")
     testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
+    //testCompileOnly(sourceSets.main.output)
+    //testCompile sourceSets.main.output
 
     // export module
-    //appstoreModuleImplementation
+    appstoreModuleImplementation group: 'net.datafaker', name: 'datafaker', version: '1.9.0'
 }
 
 clean {
@@ -48,14 +52,19 @@ sourceSets {
     main {
         java {
             srcDirs = ['javasource']
+            destinationDirectory.set(file("$rootDir/deployment/run/bin"))
         }
         resources {
             srcDirs = ['resources']
         }
+
     }
     test {
         java {
             srcDirs = ['javasource-test']
+            //compileClasspath += sourceSets.main.output
+            //runtimeClasspath += sourceSets.main.output
+            destinationDirectory.set(file("$rootDir/deployment/run/bin"))
         }
         resources {
             srcDirs = ['resources-test']
@@ -88,13 +97,29 @@ task getExportLibs(type: Copy) {
 }
 
 task exportModule(type: Exec,dependsOn: 'getExportLibs'){
-    commandLine "\\Program Files\\Mendix\\9.18.0.53394\\modeler\\mxutil.exe", "create-module-package", "CsvServices.mpr", "CsvServices", "--package-dir=DIST"
+    commandLine "\\Program Files\\Mendix\\9.24.3.8044\\modeler\\mxutil.exe", "create-module-package", "CsvServices.mpr", "CsvServices", "--package-dir=DIST"
     doLast {
         copy {
             from 'DIST'
             include 'CsvServices.mpk'
             into 'DIST'
-            rename 'CsvServices.mpk', 'CsvServices-2.4.mpk'
+            rename 'CsvServices.mpk', 'CsvServices-2.5.mpk'
+        }
+    }
+}
+
+task runTestMain(type: JavaExec){
+    dependsOn classes
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'tests.impl.TestMain'
+}
+task printSourceSetInformation(){
+    doLast{
+        sourceSets.each { srcSet ->
+            println "["+srcSet.name+"]"
+            print "-->Source directories: "+srcSet.allJava.srcDirs+"\n"
+            print "-->Output directories: "+srcSet.output.classesDirs.files+"\n"
+            println ""
         }
     }
 }

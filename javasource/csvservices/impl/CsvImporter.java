@@ -106,9 +106,16 @@ public class CsvImporter {
 
                 for (int i = 0; i < attributeNames.length; i++) {
                     attributeNames[i] = attributeNames[i].trim();
+                    logger.debug("attribute: " + attributeNames[i]);
+                    if(attributeNames[i].startsWith("\"") && attributeNames[i].endsWith("\"")){
+                        logger.debug("attribute has quotes: " + attributeNames[i]);
+                        attributeNames[i] = attributeNames[i].replaceAll("^\"|\"$", "");
+                        logger.debug("attribute: " + attributeNames[i]);
+                    }
                     // check if attribute is part of primary key
                     attributeIsPK[i] = attributeNames[i].endsWith("*");
                     if (attributeIsPK[i]) {
+                        logger.debug("attribute is pk: " + attributeNames[i]);
                         entityHasPk = true;
                         attributeNames[i] = attributeNames[i].replace("*", "");
                     }

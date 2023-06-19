@@ -59,9 +59,7 @@ public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
         CsvImporter csvImporter = new CsvImporter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
-        if (this.MaxRecords == null) {
-            this.MaxRecords = new Long(-1);
-        }
+        int maxRecords = (this.MaxRecords == null) ? -1 : this.MaxRecords.intValue();
         URL csvUrl = new URL(this.CsvUrl);
         InputStream is = null;
         try {
@@ -89,7 +87,7 @@ public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
                 is = csvUrl.openStream();
             }
             try (StringWriter outputWriter = new StringWriter()) {
-                objectsCreated = new Long(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, is, false, this.MaxRecords.intValue(), this.HasHeader, this.AlternativeHeader, this.Delimiter));
+                objectsCreated = Long.valueOf(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, is, false, maxRecords, this.HasHeader, this.AlternativeHeader, this.Delimiter));
                 logger.info("Done importing: " + outputWriter.toString());
             }
         } catch (Exception e) {

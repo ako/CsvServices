@@ -50,10 +50,8 @@ public class ImportCsvData extends CustomJavaAction<java.lang.Long>
         StringWriter outputWriter = new StringWriter();
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
-        if (this.MaxRecords == null) {
-            this.MaxRecords = new Long(-1);
-        }
-        objectsCreated = new Long(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, new ByteArrayInputStream(this.CsvData.getBytes(StandardCharsets.UTF_8)), false, this.MaxRecords.intValue(), this.HasHeader, this.AlternativeHeader, this.Delimiter));
+		int maxRecords = (this.MaxRecords == null) ? -1 : this.MaxRecords.intValue();
+        objectsCreated = Long.valueOf(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, new ByteArrayInputStream(this.CsvData.getBytes(StandardCharsets.UTF_8)), false, maxRecords, this.HasHeader, this.AlternativeHeader, this.Delimiter));
         logger.info("Done importing: " + outputWriter.toString());
         outputWriter.close();
         return objectsCreated;
