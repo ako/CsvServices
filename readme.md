@@ -2,12 +2,13 @@
 
 Mendix module to easily import and export csv files. It provides:
  * A rest endpoint for all entities supporting csv data format. Basically a Excel Exporter, Excel Importer meets Rest services. This enables you to automate csv export and import using script, reducing the number of manual actions required.
- * Microflow activities to import and export csv data.
+ * Microflow activities to generate, import and export csv data.
  * Support for comma, semicolon, tab, and configurable delimited data, both single line and multiline.
 
-Currently this serves 2 main use cases:
+Currently this serves 3 main use cases:
 
- * This can be used to script initial data loading into a Mendix application, to quickly setup demo or test applications. 
+ * This can be used to script initial data loading into a Mendix application, to quickly setup demo or test applications.
+ * Generate and load fake test and demo data using data faker.
  * Export data for reporting in external tools like R.
 
 Csv import has support for specifying associations so you can have a csv's for all your entities and initialize you data entirely from csv files. 
@@ -163,9 +164,9 @@ Use the GET operation to export all objects of an entity:
 
 ### Fake data generation
 
-The *Generation data* activity can be used to generate csv files with fake random data for testing purposes. 
-It uses the [data faker library][https://www.datafaker.net/], which has a large number of providers to generate all sorts of data. 
-For an overview see the [providers documentation][https://www.datafaker.net/].
+The *Generate data* activity can be used to generate csv files with fake random data for testing purposes. 
+It uses the [data faker library](https://www.datafaker.net/), which has a large number of providers to generate all sorts of data. 
+For an overview see the [providers documentation](https://www.datafaker.net/).
 
 ![Fake data generation][8]
 
@@ -303,7 +304,7 @@ An example how you can load data from Mendix into R:
     * Upgrade to Mendix 9.18
     * Read specific file from zip url
 
-  * 2.5 (2023-06-14)
+  * 2.5 (2023-06-..)
     * Upgrade to Mendix 9.24
     * Fake data generator activity
     
@@ -315,3 +316,4 @@ An example how you can load data from Mendix into R:
  [6]: docs/csv-import-from-url.png
  [7]: docs/import-zip.png
  [8]: docs/data-generator.png
+

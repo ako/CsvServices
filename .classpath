@@ -9,20 +9,8 @@
 	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/javax.servlet.servlet-api.jar"/>
 	<classpathentry kind="lib" path="C:/Program Files/Mendix/9.24.3.8044/runtime/bundles/javax.websocket.websocket-api.jar"/>
 	<classpathentry kind="lib" path="userlib/automaton-1.11-8.jar"/>
-	<classpathentry kind="lib" path="userlib/com.mendix.json.jar"/>
-	<classpathentry kind="lib" path="userlib/com.mendix.logging-api.jar"/>
-	<classpathentry kind="lib" path="userlib/com.mendix.m2ee-api.jar"/>
-	<classpathentry kind="lib" path="userlib/com.mendix.public-api.jar"/>
 	<classpathentry kind="lib" path="userlib/datafaker-1.9.0.jar"/>
 	<classpathentry kind="lib" path="userlib/generex-1.0.2.jar"/>
-	<classpathentry kind="lib" path="userlib/javax.servlet.servlet-api.jar"/>
-	<classpathentry kind="lib" path="userlib/junit-jupiter-5.9.1.jar"/>
-	<classpathentry kind="lib" path="userlib/junit-jupiter-api-5.9.1.jar"/>
-	<classpathentry kind="lib" path="userlib/junit-jupiter-engine-5.9.1.jar"/>
-	<classpathentry kind="lib" path="userlib/junit-jupiter-params-5.9.1.jar"/>
-	<classpathentry kind="lib" path="userlib/junit-platform-commons-1.9.1.jar"/>
-	<classpathentry kind="lib" path="userlib/junit-platform-engine-1.9.1.jar"/>
-	<classpathentry kind="lib" path="userlib/opentest4j-1.2.0.jar"/>
 	<classpathentry kind="lib" path="userlib/snakeyaml-2.0.jar"/>
 	<classpathentry kind="output" path="deployment/run/bin"/>
 </classpath>
