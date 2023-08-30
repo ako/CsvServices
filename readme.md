@@ -210,6 +210,37 @@ Address records, first the header line, then the column expressions:
     #{PhoneNumber.phoneNumber};
     #{options.option ''''Home'''',''''Work''''}'
 
+Few more examples:
+
+ * Order - Orderlines
+
+
+    'OrderId*;
+    CustomerName;
+    CustomerAddress;
+    OrderDate(dd-MM-yyyy)'
+
+    '#{sequenceNumber.next ''''OrderId''''};
+    #{Name.first_name} #{Name.last_name};
+    #{Address.fullAddress};
+    #{date.past ''''5000'''',''''DAYS'''',''''dd-MM-yyyy''''}'
+
+    'OrderLineId*;
+     ProductName;
+     ProductId;
+     Amount;
+     PricePerItem;
+     OrderLines_Orders.OrderId'
+
+    '#{sequenceNumber.next ''''OrderLineId''''};
+    #{Appliance.brand} #{Appliance.equipment};
+    #{Number.numberBetween ''''1'''',''''256''''};
+    #{Number.numberBetween ''''1'''',''''10''''};
+    #{Number.randomDouble ''''2'''',''''10'''',''''1999''''};
+    #{Number.numberBetween ''''1'''',''''200''''};
+'
+
+
 ### Security
 
 When enabling this module, endpoints are available for *all* entities in your application. 
