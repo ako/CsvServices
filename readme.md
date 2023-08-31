@@ -212,8 +212,7 @@ Address records, first the header line, then the column expressions:
 
 Few more examples:
 
- * Order - Orderlines
-
+Order - Orderlines
 
     'OrderId*;
     CustomerName;
@@ -237,9 +236,7 @@ Few more examples:
     #{Number.numberBetween ''''1'''',''''256''''};
     #{Number.numberBetween ''''1'''',''''10''''};
     #{Number.randomDouble ''''2'''',''''10'''',''''1999''''};
-    #{Number.numberBetween ''''1'''',''''200''''};
-'
-
+    #{Number.numberBetween ''''1'''',''''200''''};'
 
 ### Security
 
