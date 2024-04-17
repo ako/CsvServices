@@ -61,7 +61,7 @@ public class CsvExporter {
                  * Before first record, print header names
                  */
                 if (recordIdx == 0) {
-                    String prefix = "Id,";
+                    String prefix = "Id" + delimiter;
                     for (IMendixObjectMember objMember : members.values()) {
                         /*
                          * Include name of attribute. In case of association, remove module name
@@ -78,7 +78,7 @@ public class CsvExporter {
                  * Output all attributes
                  */
                 String prefix = "";
-                writer.write(String.format("%d,", obj.getId().toLong()));
+                writer.write(String.format("%d" + delimiter, obj.getId().toLong()));
                 for (IMendixObjectMember objMember : members.values()) {
                     writeAttributeValue(context, writer, prefix, objMember);
                     prefix = delimiter;

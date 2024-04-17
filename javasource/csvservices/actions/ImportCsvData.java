@@ -44,7 +44,7 @@ public class ImportCsvData extends CustomJavaAction<java.lang.Long>
 	public java.lang.Long executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-        logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
+        logger.info("executeAction - ImportCsvData: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
         Long objectsCreated = 0l;
         CsvImporter csvImporter = new CsvImporter();
         StringWriter outputWriter = new StringWriter();

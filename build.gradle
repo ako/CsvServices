@@ -40,6 +40,7 @@ dependencies {
 
     // export module
     appstoreModuleImplementation group: 'net.datafaker', name: 'datafaker', version: '1.9.0'
+    appstoreModuleImplementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-csv', version: '2.14.2'
 }
 
 clean {

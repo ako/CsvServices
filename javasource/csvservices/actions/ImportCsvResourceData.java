@@ -44,7 +44,7 @@ public class ImportCsvResourceData extends CustomJavaAction<java.lang.Long>
 	public java.lang.Long executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-        logger.info("executeAction: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
+        logger.info("executeAction - importCsvResourceData: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
         Long objectsCreated = 0L;
 		int maxRecords = (this.MaxRecords == null) ? -1 : this.MaxRecords.intValue();
         CsvImporter csvImporter = new CsvImporter();

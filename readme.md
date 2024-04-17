@@ -335,6 +335,7 @@ An example how you can load data from Mendix into R:
   * 2.5 (2023-06-..)
     * Upgrade to Mendix 9.24
     * Fake data generator activity
+
     
  [1]: docs/csv-import-mf-action.png
  [2]: docs/csv-import-mf-action-usage.png

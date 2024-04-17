@@ -30,3 +30,5 @@ bin
 /**/node_modules/
 !/javascriptsource/**/node_modules/
 /nativemobile/builds/
+._build.gradle
+/build/*
