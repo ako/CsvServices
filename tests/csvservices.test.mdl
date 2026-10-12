@@ -1,0 +1,235 @@
+mdl 1;
+/**
+ * Tests for the CsvServices microflow actions, run with mxcli:
+ *
+ *   mxcli test tests/ -p CsvServices.mpr --local --db-type hsqldb
+ *
+ * userlib/ must be populated first (gradlew getExportLibs).
+ * Each test's writes are rolled back afterwards (the default @cleanup), so
+ * every test sets up the data it needs. Tests also use their own key values,
+ * so they stay independent if run with @cleanup none or against a live app.
+ */
+
+/**
+ * @test import parses default and custom date formats
+ * @expect $d != empty
+ * @expect $d/DateTime2 = parseDateTime('1970-11-23', 'yyyy-MM-dd')
+ * @expect $d/DateTime3 = parseDateTime('1970-11-23', 'yyyy-MM-dd')
+ * @expect $d/DateTimeString = 'November 23rd 1970'
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.Dates', CsvData = 'DateTime1*,DateTime2,DateTime3(dd/MM/yyyy),DateTimeString
+1970-11-23 13:15:00,1970-11-23,23/11/1970,November 23rd 1970
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $d from Tests.Dates where DateTimeString = 'November 23rd 1970' first;
+/
+
+/**
+ * @test import sets typed attribute values
+ * @expect $row != empty
+ * @expect $row/LongValue = 2281319006470144
+ * @expect $row/IntegerValue = 4199
+ * @expect $row/BooleanValue = true
+ * @expect $row/EnumValue = Tests.YesNoEnum.Yes
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,LongValue,IntegerValue,BooleanValue,EnumValue
+types-1,2281319006470144,4199,true,Yes
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'types-1' first;
+/
+
+/**
+ * @test a key column updates the existing row instead of adding one
+ * @expect count($rows) = 1
+ * @expect $first/LongValue = 2
+ */
+$a = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,LongValue
+upsert-1,1
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$b = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,LongValue
+upsert-1,2
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $rows from Tests.AllTypes where StringValue = 'upsert-1';
+retrieve $first from Tests.AllTypes where StringValue = 'upsert-1' first;
+/
+
+/**
+ * @test a string key value cannot inject into the lookup query
+ * @expect $victim/LongValue = 111
+ * @expect $injected != empty
+ */
+$a = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,LongValue
+victim-1,111
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$b = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,LongValue
+x'') or (''1''=''1,999
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $victim from Tests.AllTypes where StringValue = 'victim-1' first;
+retrieve $injected from Tests.AllTypes where StringValue = 'x'') or (''1''=''1' first;
+/
+
+/**
+ * @test a numeric key value cannot inject into the lookup query
+ * @expect $victim/StringValue = 'numeric-victim-1'
+ */
+$a = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'LongValue*,StringValue
+424242,numeric-victim-1
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$b = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'LongValue*,StringValue
+0 or LongValue > 0,numeric-hacked
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $victim from Tests.AllTypes where LongValue = 424242 first;
+/
+
+/**
+ * @test lines after a # comment line are imported
+ * @expect $row != empty
+ * @expect $row/LongValue = 7
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = '# generated test data
+StringValue*,LongValue
+# another comment
+comment-1,7
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'comment-1' first;
+/
+
+/**
+ * @test semicolon and explicit delimiters are supported
+ * @expect $semi/LongValue = 8
+ * @expect $caret/LongValue = 9
+ */
+$a = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*;LongValue
+delim-semi;8
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$b = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*^LongValue
+delim-caret^9
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = '\^');
+retrieve $semi from Tests.AllTypes where StringValue = 'delim-semi' first;
+retrieve $caret from Tests.AllTypes where StringValue = 'delim-caret' first;
+/
+
+/**
+ * @test an alternative header renames and skips columns
+ * @expect $row/LongValue = 10
+ * @expect $row/String2Value = empty
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'ignored,whatever,skipped
+althdr-1,10,should not be imported
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = 'StringValue*,LongValue,-String2Value', Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'althdr-1' first;
+/
+
+/**
+ * @test a single reference is set by the referenced key
+ * @expect $customer != empty
+ * @expect $order != empty
+ * @expect $linked/CustomerId = 900001
+ */
+$c = call java action CsvServices.ImportCsvData(Entity = 'Orders.Customers', CsvData = 'CustomerId*,Firstname,Lastname
+900001,Ada,Lovelace
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$o = call java action CsvServices.ImportCsvData(Entity = 'Orders.Orders', CsvData = 'OrderNumber*,Order_Customer.CustomerId
+900001,900001
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $customer from Orders.Customers where CustomerId = 900001 first;
+retrieve $order from Orders.Orders where OrderNumber = 900001 first;
+retrieve $linked from $order/Orders.Order_Customer;
+/
+
+/**
+ * @test a reference set is set from bracketed keys
+ * @expect count($labels) = 2
+ */
+$l = call java action CsvServices.ImportCsvData(Entity = 'Orders.ProductLabels', CsvData = 'LabelId*,Label
+900001,red
+900002,green
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$p = call java action CsvServices.ImportCsvData(Entity = 'Orders.Products', CsvData = 'ProductId,Name*,Product_Labels.LabelId
+900001,refset-product-1,[900001;900002]
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $product from Orders.Products where Name = 'refset-product-1' first;
+retrieve $labels from $product/Orders.Product_Labels;
+/
+
+/**
+ * @test an unknown key column fails the line instead of matching anything
+ * @expect $row = empty
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'Bogus*,StringValue
+1,unknown-key-1
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'unknown-key-1' first;
+/
+
+/**
+ * @test export includes every row, beyond the first page of ten
+ * @expect find($csv, 'page-25') >= 0
+ * @expect find($csv, 'page-01') >= 0
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*
+page-01
+page-02
+page-03
+page-04
+page-05
+page-06
+page-07
+page-08
+page-09
+page-10
+page-11
+page-12
+page-13
+page-14
+page-15
+page-16
+page-17
+page-18
+page-19
+page-20
+page-21
+page-22
+page-23
+page-24
+page-25
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$csv = call java action CsvServices.ExportCsvData(Entity = 'Tests.AllTypes', Delimiter = empty);
+/
+
+/**
+ * @test export handles a binary attribute and writes a header line
+ * @expect startsWith($csv, 'Id,')
+ * @expect find($csv, '"binary-1"') >= 0
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,BinaryValue
+binary-1,
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$csv = call java action CsvServices.ExportCsvData(Entity = 'Tests.AllTypes', Delimiter = empty);
+/
+
+/**
+ * @test export honours the delimiter parameter
+ * @expect startsWith($csv, 'Id;')
+ * @expect find($csv, ';"delim-dates-1"') >= 0
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.Dates', CsvData = 'DateTime1*,DateTimeString
+1999-01-01 00:00:00,delim-dates-1
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$csv = call java action CsvServices.ExportCsvData(Entity = 'Tests.Dates', Delimiter = ';');
+/
+
+/**
+ * @test import from a resource file
+ * @expect $row != empty
+ */
+$created = call java action CsvServices.ImportCsvResourceData(Entity = 'Tests.AllTypes', CsvResourcePath = 'AllTypesTestData1.csv', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'wiphakdi' first;
+/
+
+/**
+ * @test the data generator produces a quoted header and sequence-numbered rows
+ * @expect startsWith($data, '"EmployeeId*","Firstname"')
+ * @expect find($data, '"5","') >= 0
+ */
+$data = call java action CsvServices.GenerateData(Header = 'EmployeeId*,Firstname', ColumnExpressions = '#{sequenceNumber.next ''''empId''''},#{Name.first_name}', Delimiter = ',', RecordCount = 5, DataPattern = empty);
+/

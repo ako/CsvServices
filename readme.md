@@ -272,6 +272,17 @@ An example how you can load data from Mendix into R:
 * It helps if you create a public key attribute for every entity, which can be used in associations. For example, the Orders entity has a OrderId attribute.
 * Set loglevel to DEBUG to get fine grained log information.
 
+### Running the tests
+
+The `tests/` folder holds tests for the microflow actions (import, export, data generation),
+written for [mxcli](https://github.com/mendixlabs/mxcli). They run against a real Mendix runtime
+with a scratch database and leave the project unchanged:
+
+    gradlew getExportLibs
+    mxcli test tests/ -p CsvServices.mpr --local --db-type hsqldb
+
+The first run downloads the matching Mendix runtime. Each test's database changes are rolled back afterwards.
+
 ### Todo
 
 * Add configuration to specify which modules/entities should have csv endpoints
@@ -343,6 +354,7 @@ An example how you can load data from Mendix into R:
     * Fixed csv export stopping after 10 records on Mendix 10
     * Fixed csv export failing on entities with a binary attribute on Mendix 10
     * Fixed import skipping all lines after a # comment line
+    * Added mxcli tests for the microflow actions (tests/)
 
     
  [1]: docs/csv-import-mf-action.png
