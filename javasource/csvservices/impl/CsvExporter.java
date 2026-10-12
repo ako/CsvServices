@@ -10,6 +10,7 @@ import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.systemwideinterfaces.core.IMendixObjectMember;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.Writer;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -142,6 +143,9 @@ public class CsvExporter {
             } else if (value.getClass().equals(Double.class)) {
                 logger.debug("double = " + value);
                 csvValue = String.format("%f", value);
+            } else if (value instanceof InputStream || value instanceof byte[]) {
+                // binary attributes are not exported; Mendix 10 returns a stream even when empty
+                csvValue = "";
             } else {
                 csvValue = String.format("%g", value);
             }

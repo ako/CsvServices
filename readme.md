@@ -341,6 +341,8 @@ An example how you can load data from Mendix into R:
     * Security: the csv endpoint now always requires credentials (previously skipped in development, test and *.mxapps.io environments)
     * Security: fixed XPath injection in key lookups, removed credential logging and the unfinished X-Use-SQL import
     * Fixed csv export stopping after 10 records on Mendix 10
+    * Fixed csv export failing on entities with a binary attribute on Mendix 10
+    * Fixed import skipping all lines after a # comment line
 
     
  [1]: docs/csv-import-mf-action.png
