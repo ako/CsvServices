@@ -338,6 +338,9 @@ An example how you can load data from Mendix into R:
 
   * Unreleased
     * Upgrade to Mendix 10.24 (LTS), Java 21
+    * Security: the csv endpoint now always requires credentials (previously skipped in development, test and *.mxapps.io environments)
+    * Security: fixed XPath injection in key lookups, removed credential logging and the unfinished X-Use-SQL import
+    * Fixed csv export stopping after 10 records on Mendix 10
 
     
  [1]: docs/csv-import-mf-action.png

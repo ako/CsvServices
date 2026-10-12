@@ -37,17 +37,11 @@ public class CsvRestHandler extends RequestHandler {
          * Validate credentials
          */
 
-        IContext context = null;
-        if (!Core.getConfiguration().isInDevelopment() && !Core.getConfiguration().getApplicationRootUrl().contains(".mxapps.io")) {
-            logger.info("Not running in development, checking username password");
-            context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
-            if (context == null) {
-                iMxRuntimeResponse.setStatus(401);
-                return;
-            }
-        } else {
-            logger.info("Running in development, skipping username password validation.");
-            context = Core.createSystemContext();
+        // Always required: isInDevelopment() is also true in Test environments, which are publicly reachable
+        IContext context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
+        if (context == null) {
+            iMxRuntimeResponse.setStatus(401);
+            return;
         }
         /*
          * get path
@@ -130,10 +124,17 @@ public class CsvRestHandler extends RequestHandler {
         if (authHeader != null && authHeader.trim().startsWith("Basic")) {
             String base64Credentials = authHeader.trim().substring("Basic".length()).trim();
             //String base64 = new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Credentials));
-            String base64 = new String(Base64.getDecoder().decode(base64Credentials));
-            String[] parts = base64.split(":");
-            username = parts[0];
-            password = parts[1];
+            String base64;
+            try {
+                base64 = new String(Base64.getDecoder().decode(base64Credentials));
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+            String[] parts = base64.split(":", 2);
+            if (parts.length == 2) {
+                username = parts[0];
+                password = parts[1];
+            }
         }
         logger.info("username: " + username);
         if (username != null) {
