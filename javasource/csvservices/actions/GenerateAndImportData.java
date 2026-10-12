@@ -12,32 +12,40 @@ package csvservices.actions;
 import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.DataGenerator;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import static java.lang.Math.min;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class GenerateAndImportData extends CustomJavaAction<java.lang.Long>
+public class GenerateAndImportData extends UserAction<java.lang.Long>
 {
-	private java.lang.String Header;
-	private java.lang.String ColumnExpressions;
-	private java.lang.String Delimiter;
-	private java.lang.Long RecordCount;
-	private java.lang.String DataPattern;
-	private java.lang.String Entity;
+	private final java.lang.String Header;
+	private final java.lang.String ColumnExpressions;
+	private final java.lang.String Delimiter;
+	private final java.lang.Long RecordCount;
+	private final java.lang.String DataPattern;
+	private final java.lang.String Entity;
 
-	public GenerateAndImportData(IContext context, java.lang.String Header, java.lang.String ColumnExpressions, java.lang.String Delimiter, java.lang.Long RecordCount, java.lang.String DataPattern, java.lang.String Entity)
+	public GenerateAndImportData(
+		IContext context,
+		java.lang.String _header,
+		java.lang.String _columnExpressions,
+		java.lang.String _delimiter,
+		java.lang.Long _recordCount,
+		java.lang.String _dataPattern,
+		java.lang.String _entity
+	)
 	{
 		super(context);
-		this.Header = Header;
-		this.ColumnExpressions = ColumnExpressions;
-		this.Delimiter = Delimiter;
-		this.RecordCount = RecordCount;
-		this.DataPattern = DataPattern;
-		this.Entity = Entity;
+		this.Header = _header;
+		this.ColumnExpressions = _columnExpressions;
+		this.Delimiter = _delimiter;
+		this.RecordCount = _recordCount;
+		this.DataPattern = _dataPattern;
+		this.Entity = _entity;
 	}
 
 	@java.lang.Override

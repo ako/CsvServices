@@ -4,53 +4,68 @@
 
 package orders.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the Orders module
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_AfterStartupBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Orders.MF_AfterStartup");
+		return builder;
+	}
+
 	public static boolean mF_AfterStartup(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		return (java.lang.Boolean) Core.microflowCall("Orders.MF_AfterStartup").withParams(params).execute(context);
+		Object result = mF_AfterStartupBuilder().execute(context);
+		return (boolean) result;
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_DeleteAllBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Orders.MF_DeleteAll");
+		return builder;
+	}
+
 	public static void mF_DeleteAll(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Orders.MF_DeleteAll").withParams(params).execute(context);
+		mF_DeleteAllBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_GetProductsBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Orders.MF_GetProducts");
+		return builder;
+	}
+
 	public static java.util.List<orders.proxies.Products> mF_GetProducts(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		java.util.List<IMendixObject> objs = Core.microflowCall("Orders.MF_GetProducts").withParams(params).execute(context);
-		if (objs == null) {
-			return null;
-		} else {
-			return objs.stream()
-				.map(obj -> orders.proxies.Products.initialize(context, obj))
-				.collect(java.util.stream.Collectors.toList());
-		}
+		Object result = mF_GetProductsBuilder().execute(context);
+		return result == null ? null : com.mendix.utils.ListUtils.map((java.util.List<IMendixObject>) result, obj -> orders.proxies.Products.initialize(context, obj));
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_InitLabelsBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Orders.MF_InitLabels");
+		return builder;
+	}
+
 	public static void mF_InitLabels(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Orders.MF_InitLabels").withParams(params).execute(context);
+		mF_InitLabelsBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_testBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Orders.MF_test");
+		return builder;
+	}
+
 	public static void mF_test(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Orders.MF_test").withParams(params).execute(context);
+		mF_testBuilder().execute(context);
 	}
 }

@@ -4,35 +4,45 @@
 
 package tests.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the Tests module
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder exportCsvBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Tests.ExportCsv");
+		return builder;
+	}
+
 	public static void exportCsv(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Tests.ExportCsv").withParams(params).execute(context);
+		exportCsvBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder importCsvBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Tests.ImportCsv");
+		return builder;
+	}
+
 	public static void importCsv(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Tests.ImportCsv").withParams(params).execute(context);
+		importCsvBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder importCsvResourceBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Tests.ImportCsvResource");
+		return builder;
+	}
+
 	public static void importCsvResource(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Tests.ImportCsvResource").withParams(params).execute(context);
+		importCsvResourceBuilder().execute(context);
 	}
 }

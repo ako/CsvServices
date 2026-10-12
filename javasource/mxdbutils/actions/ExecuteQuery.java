@@ -17,26 +17,30 @@ import java.util.function.Function;
 import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import mxdbutils.proxies.Query;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class ExecuteQuery extends CustomJavaAction<java.lang.Long>
+public class ExecuteQuery extends UserAction<java.lang.Long>
 {
-	private IMendixObject __query;
-	private mxdbutils.proxies.Query query;
+	/** @deprecated use query.getMendixObject() instead. */
+	@java.lang.Deprecated(forRemoval = true)
+	private final IMendixObject __query;
+	private final mxdbutils.proxies.Query query;
 
-	public ExecuteQuery(IContext context, IMendixObject query)
+	public ExecuteQuery(
+		IContext context,
+		IMendixObject _query
+	)
 	{
 		super(context);
-		this.__query = query;
+		this.__query = _query;
+		this.query = _query == null ? null : mxdbutils.proxies.Query.initialize(getContext(), _query);
 	}
 
 	@java.lang.Override
 	public java.lang.Long executeAction() throws Exception
 	{
-		this.query = this.__query == null ? null : mxdbutils.proxies.Query.initialize(getContext(), __query);
-
 		// BEGIN USER CODE
 		Long result = Core.dataStorage().executeWithConnection(executeQuery(getContext(), query));
 		return result;

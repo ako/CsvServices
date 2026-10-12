@@ -43,18 +43,9 @@ public class HttpResponse extends system.proxies.HttpMessage
 	protected HttpResponse(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixObject httpResponseMendixObject)
 	{
 		super(context, httpResponseMendixObject);
-		if (!com.mendix.core.Core.isSubClassOf(entityName, httpResponseMendixObject.getType())) {
+		if (!httpResponseMendixObject.isInstanceOf(entityName)) {
 			throw new java.lang.IllegalArgumentException(String.format("The given object is not a %s", entityName));
 		}	
-	}
-
-	/**
-	 * @deprecated Use 'HttpResponse.load(IContext, IMendixIdentifier)' instead.
-	 */
-	@java.lang.Deprecated
-	public static system.proxies.HttpResponse initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
-	{
-		return system.proxies.HttpResponse.load(context, mendixIdentifier);
 	}
 
 	/**
@@ -167,22 +158,13 @@ public class HttpResponse extends system.proxies.HttpMessage
 		return getMendixObject().hashCode();
 	}
 
-	/**
-	 * @return String name of this class
-	 */
+  /**
+   * Gives full name ("Module.Entity" name) of the type of the entity.
+   *
+   * @return the name
+   */
 	public static java.lang.String getType()
 	{
 		return entityName;
-	}
-
-	/**
-	 * @return String GUID from this object, format: ID_0000000000
-	 * @deprecated Use getMendixObject().getId().toLong() to get a unique identifier for this object.
-	 */
-	@java.lang.Override
-	@java.lang.Deprecated
-	public java.lang.String getGUID()
-	{
-		return "ID_" + getMendixObject().getId().toLong();
 	}
 }

@@ -15,20 +15,23 @@ import java.sql.Statement;
 import java.util.function.Function;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
 /**
  * Free format update statement.
  * Returns amount of records mutated.
  */
-public class ExecuteDatabaseUpdateStatement extends CustomJavaAction<java.lang.Long>
+public class ExecuteDatabaseUpdateStatement extends UserAction<java.lang.Long>
 {
-	private java.lang.String statement;
+	private final java.lang.String statement;
 
-	public ExecuteDatabaseUpdateStatement(IContext context, java.lang.String statement)
+	public ExecuteDatabaseUpdateStatement(
+		IContext context,
+		java.lang.String _statement
+	)
 	{
 		super(context);
-		this.statement = statement;
+		this.statement = _statement;
 	}
 
 	@java.lang.Override

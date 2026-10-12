@@ -6,26 +6,24 @@ package mxdbutils.proxies;
 
 public enum QueryType
 {
-	SELECT(new java.lang.String[][] { new java.lang.String[] { "en_US", "SELECT (results)" } }),
-	UPDATE(new java.lang.String[][] { new java.lang.String[] { "en_US", "UPDATE (no results)" } });
+	SELECT("6eb8ce2e-4bf4-471a-b9e7-b4c207484d68"),
+	UPDATE("860400d4-6ec3-4566-9568-d1c5e3f98fe4");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private QueryType(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private QueryType(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }

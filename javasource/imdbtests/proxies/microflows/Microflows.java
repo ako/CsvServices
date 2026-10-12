@@ -4,65 +4,105 @@
 
 package imdbtests.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the ImdbTests module
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbNamesBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbNames");
+		return builder;
+	}
+
 	public static void getImdbNames(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbNames").withParams(params).execute(context);
+		getImdbNamesBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbTitleAkasBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbTitleAkas");
+		return builder;
+	}
+
 	public static void getImdbTitleAkas(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbTitleAkas").withParams(params).execute(context);
+		getImdbTitleAkasBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbTitleBasicsBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbTitleBasics");
+		return builder;
+	}
+
 	public static void getImdbTitleBasics(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbTitleBasics").withParams(params).execute(context);
+		getImdbTitleBasicsBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbTitleCrewBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbTitleCrew");
+		return builder;
+	}
+
 	public static void getImdbTitleCrew(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbTitleCrew").withParams(params).execute(context);
+		getImdbTitleCrewBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbTitleEpisodesBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbTitleEpisodes");
+		return builder;
+	}
+
 	public static void getImdbTitleEpisodes(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbTitleEpisodes").withParams(params).execute(context);
+		getImdbTitleEpisodesBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbTitlePrincipalsBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbTitlePrincipals");
+		return builder;
+	}
+
 	public static void getImdbTitlePrincipals(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbTitlePrincipals").withParams(params).execute(context);
+		getImdbTitlePrincipalsBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder getImdbTitleRatingsBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.GetImdbTitleRatings");
+		return builder;
+	}
+
 	public static void getImdbTitleRatings(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.GetImdbTitleRatings").withParams(params).execute(context);
+		getImdbTitleRatingsBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder importAllBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.ImportAll");
+		return builder;
+	}
+
 	public static void importAll(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.ImportAll").withParams(params).execute(context);
+		importAllBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder truncateTablesBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("ImdbTests.TruncateTables");
+		return builder;
+	}
+
 	public static void truncateTables(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("ImdbTests.TruncateTables").withParams(params).execute(context);
+		truncateTablesBuilder().execute(context);
 	}
 }

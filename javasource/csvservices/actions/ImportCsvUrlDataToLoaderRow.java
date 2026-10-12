@@ -12,11 +12,9 @@ package csvservices.actions;
 import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvLoader;
 import csvservices.impl.CsvServicesImpl;
-
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -25,30 +23,43 @@ import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class ImportCsvUrlDataToLoaderRow extends CustomJavaAction<java.lang.Long> {
-    private final java.lang.String Entity;
-    private final java.lang.String CsvUrl;
-    private final java.lang.Long MaxRecords;
-    private final java.lang.Boolean HasHeader;
-    private final java.lang.String AlternativeHeader;
-    private final java.lang.String Delimiter;
-    private final java.lang.Boolean ConvertToJson;
+public class ImportCsvUrlDataToLoaderRow extends UserAction<java.lang.Long>
+{
+	private final java.lang.String Entity;
+	private final java.lang.String CsvUrl;
+	private final java.lang.Long MaxRecords;
+	private final java.lang.Boolean HasHeader;
+	private final java.lang.String AlternativeHeader;
+	private final java.lang.String Delimiter;
+	private final java.lang.Boolean ConvertToJson;
 
-    public ImportCsvUrlDataToLoaderRow(IContext context, java.lang.String Entity, java.lang.String CsvUrl, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader, java.lang.String Delimiter, java.lang.Boolean ConvertToJson) {
-        super(context);
-        this.Entity = Entity;
-        this.CsvUrl = CsvUrl;
-        this.MaxRecords = MaxRecords;
-        this.HasHeader = HasHeader;
-        this.AlternativeHeader = AlternativeHeader;
-        this.Delimiter = Delimiter;
-        this.ConvertToJson = ConvertToJson;
-    }
+	public ImportCsvUrlDataToLoaderRow(
+		IContext context,
+		java.lang.String _entity,
+		java.lang.String _csvUrl,
+		java.lang.Long _maxRecords,
+		java.lang.Boolean _hasHeader,
+		java.lang.String _alternativeHeader,
+		java.lang.String _delimiter,
+		java.lang.Boolean _convertToJson
+	)
+	{
+		super(context);
+		this.Entity = _entity;
+		this.CsvUrl = _csvUrl;
+		this.MaxRecords = _maxRecords;
+		this.HasHeader = _hasHeader;
+		this.AlternativeHeader = _alternativeHeader;
+		this.Delimiter = _delimiter;
+		this.ConvertToJson = _convertToJson;
+	}
 
-    @java.lang.Override
-    public java.lang.Long executeAction() throws Exception {
-        // BEGIN USER CODE
+	@java.lang.Override
+	public java.lang.Long executeAction() throws Exception
+	{
+		// BEGIN USER CODE
         logger.info("executeAction - toLoaderTable: " + this.Entity + ", " + Arrays.toString(this.Entity.split("\\.")));
         Long objectsCreated = 0L;
         CsvImporter csvImporter = new CsvImporter();
@@ -97,21 +108,21 @@ public class ImportCsvUrlDataToLoaderRow extends CustomJavaAction<java.lang.Long
             }
         }
         return objectsCreated;
-        // END USER CODE
-    }
+		// END USER CODE
+	}
 
-    /**
-     * Returns a string representation of this action
-     *
-     * @return a string representation of this action
-     */
-    @java.lang.Override
-    public java.lang.String toString() {
-        return "ImportCsvUrlDataToLoaderRow";
-    }
+	/**
+	 * Returns a string representation of this action
+	 * @return a string representation of this action
+	 */
+	@java.lang.Override
+	public java.lang.String toString()
+	{
+		return "ImportCsvUrlDataToLoaderRow";
+	}
 
-    // BEGIN EXTRA CODE
+	// BEGIN EXTRA CODE
     private static final ILogNode logger = Core.getLogger(CsvServicesImpl.LOG_NORE);
 
-    // END EXTRA CODE
+	// END EXTRA CODE
 }

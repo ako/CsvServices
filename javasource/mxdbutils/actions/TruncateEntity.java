@@ -19,8 +19,8 @@ import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
 import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
-import com.mendix.webui.CustomJavaAction;
 import mxdbutils.helpers.DbHelper;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
 /**
  * This entity will truncate the table of the entity and all its association tables.
@@ -29,14 +29,17 @@ import mxdbutils.helpers.DbHelper;
  *  - Entities used in inheritance (either specializations or generalizations)
  * 
  */
-public class TruncateEntity extends CustomJavaAction<java.lang.Boolean>
+public class TruncateEntity extends UserAction<java.lang.Boolean>
 {
-	private java.lang.String entity;
+	private final java.lang.String entity;
 
-	public TruncateEntity(IContext context, java.lang.String entity)
+	public TruncateEntity(
+		IContext context,
+		java.lang.String _entity
+	)
 	{
 		super(context);
-		this.entity = entity;
+		this.entity = _entity;
 	}
 
 	@java.lang.Override

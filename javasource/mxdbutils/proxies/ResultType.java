@@ -6,26 +6,24 @@ package mxdbutils.proxies;
 
 public enum ResultType
 {
-	CSV(new java.lang.String[][] { new java.lang.String[] { "en_US", "CSV (on screen)" } }),
-	GRID(new java.lang.String[][] { new java.lang.String[] { "en_US", "GRID (table on screen)" } });
+	CSV("252bb0fd-fe06-4fc7-a1ef-52c3b61e3a53"),
+	GRID("cc256396-f883-4bf9-982b-2d63900392bc");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private ResultType(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private ResultType(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }

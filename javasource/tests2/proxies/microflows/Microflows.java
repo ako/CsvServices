@@ -4,30 +4,35 @@
 
 package tests2.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the Tests2 module
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder test1Builder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Tests2.Test1");
+		return builder;
+	}
+
 	public static void test1(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Tests2.Test1").withParams(params).execute(context);
+		test1Builder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder truncateBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("Tests2.Truncate");
+		return builder;
+	}
+
 	public static void truncate(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("Tests2.Truncate").withParams(params).execute(context);
+		truncateBuilder().execute(context);
 	}
 }

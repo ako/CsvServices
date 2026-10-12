@@ -6,7 +6,6 @@ public class UserActionsRegistrar
 {
   public void registerActions(IActionRegistrator registrator)
   {
-    registrator.bundleComponentLoaded();
     registrator.registerUserAction(csvservices.actions.CsvExportInitializeAction.class);
     registrator.registerUserAction(csvservices.actions.ExportCsvData.class);
     registrator.registerUserAction(csvservices.actions.GenerateAndImportData.class);

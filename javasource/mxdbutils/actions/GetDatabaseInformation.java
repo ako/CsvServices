@@ -15,13 +15,13 @@ import java.sql.SQLException;
 import java.util.function.Function;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import mxdbutils.proxies.DatabaseInformation;
 import mxdbutils.proxies.Query;
 import mxdbutils.proxies.DatabaseImplementation;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class GetDatabaseInformation extends CustomJavaAction<IMendixObject>
+public class GetDatabaseInformation extends UserAction<IMendixObject>
 {
 	public GetDatabaseInformation(IContext context)
 	{

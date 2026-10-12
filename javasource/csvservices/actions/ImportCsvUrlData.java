@@ -12,7 +12,6 @@ package csvservices.actions;
 import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvServicesImpl;
 import java.io.FileInputStream;
@@ -29,25 +28,34 @@ import java.util.Arrays;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class ImportCsvUrlData extends CustomJavaAction<java.lang.Long>
+public class ImportCsvUrlData extends UserAction<java.lang.Long>
 {
-	private java.lang.String Entity;
-	private java.lang.String CsvUrl;
-	private java.lang.Long MaxRecords;
-	private java.lang.Boolean HasHeader;
-	private java.lang.String AlternativeHeader;
-	private java.lang.String Delimiter;
+	private final java.lang.String Entity;
+	private final java.lang.String CsvUrl;
+	private final java.lang.Long MaxRecords;
+	private final java.lang.Boolean HasHeader;
+	private final java.lang.String AlternativeHeader;
+	private final java.lang.String Delimiter;
 
-	public ImportCsvUrlData(IContext context, java.lang.String Entity, java.lang.String CsvUrl, java.lang.Long MaxRecords, java.lang.Boolean HasHeader, java.lang.String AlternativeHeader, java.lang.String Delimiter)
+	public ImportCsvUrlData(
+		IContext context,
+		java.lang.String _entity,
+		java.lang.String _csvUrl,
+		java.lang.Long _maxRecords,
+		java.lang.Boolean _hasHeader,
+		java.lang.String _alternativeHeader,
+		java.lang.String _delimiter
+	)
 	{
 		super(context);
-		this.Entity = Entity;
-		this.CsvUrl = CsvUrl;
-		this.MaxRecords = MaxRecords;
-		this.HasHeader = HasHeader;
-		this.AlternativeHeader = AlternativeHeader;
-		this.Delimiter = Delimiter;
+		this.Entity = _entity;
+		this.CsvUrl = _csvUrl;
+		this.MaxRecords = _maxRecords;
+		this.HasHeader = _hasHeader;
+		this.AlternativeHeader = _alternativeHeader;
+		this.Delimiter = _delimiter;
 	}
 
 	@java.lang.Override

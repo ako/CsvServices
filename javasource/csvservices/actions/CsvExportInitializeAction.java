@@ -11,17 +11,20 @@ package csvservices.actions;
 
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvRestHandler;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class CsvExportInitializeAction extends CustomJavaAction<java.lang.Boolean>
+public class CsvExportInitializeAction extends UserAction<java.lang.Boolean>
 {
-	private java.lang.String RequiredUserRole;
+	private final java.lang.String RequiredUserRole;
 
-	public CsvExportInitializeAction(IContext context, java.lang.String RequiredUserRole)
+	public CsvExportInitializeAction(
+		IContext context,
+		java.lang.String _requiredUserRole
+	)
 	{
 		super(context);
-		this.RequiredUserRole = RequiredUserRole;
+		this.RequiredUserRole = _requiredUserRole;
 	}
 
 	@java.lang.Override

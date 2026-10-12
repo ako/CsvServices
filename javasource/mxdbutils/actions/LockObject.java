@@ -17,25 +17,29 @@ import com.mendix.core.Core;
 import com.mendix.core.CoreException;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import mxdbutils.helpers.DbHelper;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
 /**
  * Locks a specific object on database level and introduces a NOWAIT to skip locking if the object is already locked by another connection.
  * 
  * Executes a SELECT FOR UPDATE; when nowait is true, it adds NOWAIT which skips if the record is already locked (at PostgreSQL).
  */
-public class LockObject extends CustomJavaAction<java.lang.Boolean>
+public class LockObject extends UserAction<java.lang.Boolean>
 {
-	private IMendixObject obj;
-	private java.lang.Boolean nowait;
+	private final IMendixObject obj;
+	private final java.lang.Boolean nowait;
 
-	public LockObject(IContext context, IMendixObject obj, java.lang.Boolean nowait)
+	public LockObject(
+		IContext context,
+		IMendixObject _obj,
+		java.lang.Boolean _nowait
+	)
 	{
 		super(context);
-		this.obj = obj;
-		this.nowait = nowait;
+		this.obj = _obj;
+		this.nowait = _nowait;
 	}
 
 	@java.lang.Override

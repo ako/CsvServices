@@ -4,7 +4,7 @@
 
 package tests2.proxies;
 
-public class Products
+public class Products implements com.mendix.systemwideinterfaces.core.IEntityProxy
 {
 	private final com.mendix.systemwideinterfaces.core.IMendixObject productsMendixObject;
 
@@ -49,21 +49,12 @@ public class Products
 		if (productsMendixObject == null) {
 			throw new java.lang.IllegalArgumentException("The given object cannot be null.");
 		}
-		if (!com.mendix.core.Core.isSubClassOf(entityName, productsMendixObject.getType())) {
+		if (!productsMendixObject.isInstanceOf(entityName)) {
 			throw new java.lang.IllegalArgumentException(String.format("The given object is not a %s", entityName));
 		}	
 
 		this.productsMendixObject = productsMendixObject;
 		this.context = context;
-	}
-
-	/**
-	 * @deprecated Use 'Products.load(IContext, IMendixIdentifier)' instead.
-	 */
-	@java.lang.Deprecated
-	public static tests2.proxies.Products initialize(com.mendix.systemwideinterfaces.core.IContext context, com.mendix.systemwideinterfaces.core.IMendixIdentifier mendixIdentifier) throws com.mendix.core.CoreException
-	{
-		return tests2.proxies.Products.load(context, mendixIdentifier);
 	}
 
 	/**
@@ -93,39 +84,6 @@ public class Products
 			.collect(java.util.stream.Collectors.toList());
 	}
 
-	/**
-	 * Commit the changes made on this proxy object.
-	 * @throws com.mendix.core.CoreException
-	 */
-	public final void commit() throws com.mendix.core.CoreException
-	{
-		com.mendix.core.Core.commit(context, getMendixObject());
-	}
-
-	/**
-	 * Commit the changes made on this proxy object using the specified context.
-	 * @throws com.mendix.core.CoreException
-	 */
-	public final void commit(com.mendix.systemwideinterfaces.core.IContext context) throws com.mendix.core.CoreException
-	{
-		com.mendix.core.Core.commit(context, getMendixObject());
-	}
-
-	/**
-	 * Delete the object.
-	 */
-	public final void delete()
-	{
-		com.mendix.core.Core.delete(context, getMendixObject());
-	}
-
-	/**
-	 * Delete the object using the specified context.
-	 */
-	public final void delete(com.mendix.systemwideinterfaces.core.IContext context)
-	{
-		com.mendix.core.Core.delete(context, getMendixObject());
-	}
 	/**
 	 * @return value of ProductID
 	 */
@@ -281,17 +239,13 @@ public class Products
 		}
 	}
 
-	/**
-	 * @return the IMendixObject instance of this proxy for use in the Core interface.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IMendixObject getMendixObject()
 	{
 		return productsMendixObject;
 	}
 
-	/**
-	 * @return the IContext instance of this proxy, or null if no IContext instance was specified at initialization.
-	 */
+	@java.lang.Override
 	public final com.mendix.systemwideinterfaces.core.IContext getContext()
 	{
 		return context;
@@ -317,21 +271,13 @@ public class Products
 		return getMendixObject().hashCode();
 	}
 
-	/**
-	 * @return String name of this class
-	 */
+  /**
+   * Gives full name ("Module.Entity" name) of the type of the entity.
+   *
+   * @return the name
+   */
 	public static java.lang.String getType()
 	{
 		return entityName;
-	}
-
-	/**
-	 * @return String GUID from this object, format: ID_0000000000
-	 * @deprecated Use getMendixObject().getId().toLong() to get a unique identifier for this object.
-	 */
-	@java.lang.Deprecated
-	public java.lang.String getGUID()
-	{
-		return "ID_" + getMendixObject().getId().toLong();
 	}
 }

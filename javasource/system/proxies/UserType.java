@@ -6,26 +6,24 @@ package system.proxies;
 
 public enum UserType
 {
-	Internal(new java.lang.String[][] { new java.lang.String[] { "en_US", "Internal" }, new java.lang.String[] { "nl_NL", "Intern" } }),
-	External(new java.lang.String[][] { new java.lang.String[] { "en_US", "External" }, new java.lang.String[] { "nl_NL", "Extern" } });
+	Internal("b3ebe826-d1db-4a1c-b27a-eaff9dbf78a3"),
+	External("42598c5d-ed15-4a80-ba0d-e3af85994c5d");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private UserType(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private UserType(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }

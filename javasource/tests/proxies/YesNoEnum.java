@@ -6,26 +6,24 @@ package tests.proxies;
 
 public enum YesNoEnum
 {
-	Yes(new java.lang.String[][] { new java.lang.String[] { "en_US", "Yes" } }),
-	No(new java.lang.String[][] { new java.lang.String[] { "en_US", "No" } });
+	Yes("edb0ff72-27c5-47f4-9aeb-2aef34a99e9e"),
+	No("2b3aeb8a-24a5-440c-9fa8-4872de56cbb5");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private YesNoEnum(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private YesNoEnum(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }
