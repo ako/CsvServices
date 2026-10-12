@@ -127,17 +127,15 @@ public class CsvRestHandler extends RequestHandler {
         String password = null;
         ISession session = null;
         IContext context = null;
-        logger.info("authorization: " + authHeader);
         if (authHeader != null && authHeader.trim().startsWith("Basic")) {
             String base64Credentials = authHeader.trim().substring("Basic".length()).trim();
             //String base64 = new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Credentials));
             String base64 = new String(Base64.getDecoder().decode(base64Credentials));
-            logger.info("credentials: " + base64);
             String[] parts = base64.split(":");
             username = parts[0];
             password = parts[1];
         }
-        logger.info("username: " + username + "," + password);
+        logger.info("username: " + username);
         if (username != null) {
             try {
                 session = Core.login(username, password);
