@@ -74,6 +74,8 @@ public class CsvImporter {
                 line = line.substring(1);
             }
             if (line.startsWith("#") || line.length() == 0) {
+                // skip comment and empty lines, don't let them prefix the next line
+                line = "";
                 continue;
             }
             if (lineNo == 0) {
