@@ -66,32 +66,26 @@ public class CsvRestHandler extends RequestHandler {
         logger.debug("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
         if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("POST")) {
             // inserting new objects
-            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Use-SQL") != null &&
-                    iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Use-SQL").equalsIgnoreCase("true")) {
-                CsvImporterSql importer = new CsvImporterSql();
-                importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
-            } else {
-                CsvImporter importer = new CsvImporter();
-                int parMaxRecords = -1;
-                boolean parHasHeader = true;
-                String parAlternativeHeader = null;
-                String parDelimiter = null;
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Max-Records") != null) {
-                    parMaxRecords = iMxRuntimeRequest.getHttpServletRequest().getIntHeader("X-Max-Records");
-                }
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header") != null) {
-                    parHasHeader =  Boolean.valueOf(iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header"));
-                }
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header") != null) {
-                    parAlternativeHeader = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header");
-                }
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter") != null) {
-                    parDelimiter = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter");
-                }
-                importer.csvToEntities(context, writer, path[0], path[1],
-                        iMxRuntimeRequest.getInputStream(), false,
-                        parMaxRecords, parHasHeader, parAlternativeHeader, parDelimiter);
+            CsvImporter importer = new CsvImporter();
+            int parMaxRecords = -1;
+            boolean parHasHeader = true;
+            String parAlternativeHeader = null;
+            String parDelimiter = null;
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Max-Records") != null) {
+                parMaxRecords = iMxRuntimeRequest.getHttpServletRequest().getIntHeader("X-Max-Records");
             }
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header") != null) {
+                parHasHeader =  Boolean.valueOf(iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header"));
+            }
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header") != null) {
+                parAlternativeHeader = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header");
+            }
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter") != null) {
+                parDelimiter = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter");
+            }
+            importer.csvToEntities(context, writer, path[0], path[1],
+                    iMxRuntimeRequest.getInputStream(), false,
+                    parMaxRecords, parHasHeader, parAlternativeHeader, parDelimiter);
         } else if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("GET")) {
             /*
              * retrieve all objects from entities, return as csv (comma separated values)
