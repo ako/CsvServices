@@ -2,6 +2,7 @@ package csvservices.impl;
 
 import com.mendix.core.Core;
 import com.mendix.core.CoreException;
+import com.mendix.datastorage.XPathQuery;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
@@ -35,8 +36,6 @@ public class CsvExporter {
          */
 
         long recordCount = Core.retrieveXPathQueryAggregate(context, "count(" + xpath + ")");
-        LinkedHashMap<String, String> sortIdAsc = new LinkedHashMap<String, String>();
-        sortIdAsc.put("ID", "Asc");
 
         /*
          * number of records may have changed during last fetch, check if have retrieved full pageSize of records
@@ -46,11 +45,13 @@ public class CsvExporter {
             /*
              * Retrieve small set of records to avoid running out of memory
              */
-            String offsetXpath = xpath;
+            XPathQuery query;
             if (lastId > 0) {
-                offsetXpath += "[ID > 'ID_" + lastId + "']";
+                query = Core.createXPathQuery(xpath + "[ID > $lastId]").setVariable("lastId", lastId);
+            } else {
+                query = Core.createXPathQuery(xpath);
             }
-            List<IMendixObject> objects = Core.retrieveXPathQuery(context, offsetXpath, pageSize, 0, sortIdAsc, 2);
+            List<IMendixObject> objects = query.setAmount(pageSize).addSort("ID", true).setDepth(2).execute(context);
             /*
              * write one line per object, comma separated values
              */
