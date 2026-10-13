@@ -14,6 +14,7 @@ import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvServicesImpl;
+import csvservices.impl.CsvUrlSource;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -68,39 +69,13 @@ public class ImportCsvUrlData extends UserAction<java.lang.Long>
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
         int maxRecords = (this.MaxRecords == null) ? -1 : this.MaxRecords.intValue();
-        URL csvUrl = new URL(this.CsvUrl);
         InputStream is = null;
         try {
-            if (this.CsvUrl.endsWith(".gz") || this.CsvUrl.endsWith(".gzip")) {
-                is = new GZIPInputStream(csvUrl.openStream());
-            } else if (this.CsvUrl.contains(".zip#")){
-                // reading specific file from zip
-                String fileName = this.CsvUrl.substring(this.CsvUrl.indexOf(".zip#") + 5);
-                ZipInputStream zis = new ZipInputStream(csvUrl.openStream());
-                ZipEntry ze = zis.getNextEntry();
-                while(ze != null){
-                    String name = ze.getName();
-                    System.out.println(String.format("entry: %s",name));
-                    if(name.equals(fileName)){
-                        System.out.println("found entry");
-                        is = zis;
-                        break;
-                    }
-                    ze = zis.getNextEntry();
-                }
-                if(is == null){
-                    throw new FileNotFoundException(String.format("Zipfile not found: %s in %s",fileName,csvUrl));
-                }
-            } else {
-                is = csvUrl.openStream();
-            }
+            is = CsvUrlSource.open(this.CsvUrl);
             try (StringWriter outputWriter = new StringWriter()) {
                 objectsCreated = Long.valueOf(csvImporter.csvToEntities(getContext(), outputWriter, moduleName, entityName, is, false, maxRecords, this.HasHeader, this.AlternativeHeader, this.Delimiter));
                 logger.info("Done importing: " + outputWriter.toString());
             }
-        } catch (Exception e) {
-            logger.warn("csv import failed: " + e.getMessage());
-            logger.error(e);
         } finally {
             if (is != null) {
                 is.close();

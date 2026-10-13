@@ -234,3 +234,36 @@ retrieve $row from Tests.AllTypes where StringValue = 'wiphakdi' first;
  */
 $data = call java action CsvServices.GenerateData(Header = 'EmployeeId*,Firstname', ColumnExpressions = '#{sequenceNumber.next ''''empId''''},#{Name.first_name}', Delimiter = ',', RecordCount = 5, DataPattern = empty);
 /
+
+/*
+ * The url tests call the actions through Tests.TST_ImportCsvUrl: mxcli's @throws only
+ * catches errors from a called microflow, not from a direct java action call.
+ */
+
+/**
+ * @test url import refuses file urls
+ * @throws 'Only http and https csv urls are supported'
+ */
+$created = call microflow Tests.TST_ImportCsvUrl(CsvUrl = 'file:///etc/passwd', ToLoaderTable = false);
+/
+
+/**
+ * @test url import refuses jar urls
+ * @throws 'Only http and https csv urls are supported'
+ */
+$created = call microflow Tests.TST_ImportCsvUrl(CsvUrl = 'jar:file:///tmp/x.zip!/x.csv', ToLoaderTable = false);
+/
+
+/**
+ * @test loader-table import refuses file urls
+ * @throws 'Only http and https csv urls are supported'
+ */
+$created = call microflow Tests.TST_ImportCsvUrl(CsvUrl = 'file:///etc/passwd', ToLoaderTable = true);
+/
+
+/**
+ * @test url import reports a failed download instead of returning 0
+ * @throws
+ */
+$created = call microflow Tests.TST_ImportCsvUrl(CsvUrl = 'http://127.0.0.1:1/unreachable.csv', ToLoaderTable = false);
+/

@@ -15,6 +15,7 @@ import com.mendix.systemwideinterfaces.core.IContext;
 import csvservices.impl.CsvImporter;
 import csvservices.impl.CsvLoader;
 import csvservices.impl.CsvServicesImpl;
+import csvservices.impl.CsvUrlSource;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -66,32 +67,9 @@ public class ImportCsvUrlDataToLoaderRow extends UserAction<java.lang.Long>
         String moduleName = this.Entity.split("\\.")[0];
         String entityName = this.Entity.split("\\.")[1];
         int maxRecords = (this.MaxRecords == null) ? -1 : this.MaxRecords.intValue();
-        URL csvUrl = new URL(this.CsvUrl);
         InputStream is = null;
         try {
-            if (this.CsvUrl.endsWith(".gz") || this.CsvUrl.endsWith(".gzip")) {
-                is = new GZIPInputStream(csvUrl.openStream());
-            } else if (this.CsvUrl.contains(".zip#")) {
-                // reading specific file from zip
-                String fileName = this.CsvUrl.substring(this.CsvUrl.indexOf(".zip#") + 5);
-                ZipInputStream zis = new ZipInputStream(csvUrl.openStream());
-                ZipEntry ze = zis.getNextEntry();
-                while (ze != null) {
-                    String name = ze.getName();
-                    System.out.printf("entry: %s%n", name);
-                    if (name.equals(fileName)) {
-                        System.out.println("found entry");
-                        is = zis;
-                        break;
-                    }
-                    ze = zis.getNextEntry();
-                }
-                if (is == null) {
-                    throw new FileNotFoundException(String.format("Zipfile not found: %s in %s", fileName, csvUrl));
-                }
-            } else {
-                is = csvUrl.openStream();
-            }
+            is = CsvUrlSource.open(this.CsvUrl);
             try (StringWriter outputWriter = new StringWriter()) {
                 // create loader table
                 CsvLoader csvLoader = new CsvLoader();
@@ -99,9 +77,6 @@ public class ImportCsvUrlDataToLoaderRow extends UserAction<java.lang.Long>
 
                 logger.info("Done importing: " + outputWriter);
             }
-        } catch (Exception e) {
-            logger.warn("csv import failed: " + e.getMessage());
-            logger.error(e);
         } finally {
             if (is != null) {
                 is.close();
