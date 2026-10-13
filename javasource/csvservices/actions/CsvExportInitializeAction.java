@@ -31,7 +31,10 @@ public class CsvExportInitializeAction extends UserAction<java.lang.Boolean>
 	public java.lang.Boolean executeAction() throws Exception
 	{
 		// BEGIN USER CODE
-        Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(this.getContext(), this.RequiredUserRole));
+        // never register the endpoint without a role check
+        String requiredUserRole = (this.RequiredUserRole == null || this.RequiredUserRole.trim().isEmpty())
+                ? "Csv_Services_User" : this.RequiredUserRole.trim();
+        Core.addRequestHandler(CsvRestHandler.serviceRoot, new CsvRestHandler(this.getContext(), requiredUserRole));
         return true;
 		// END USER CODE
 	}
