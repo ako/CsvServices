@@ -4,14 +4,17 @@
  */
 
 apply plugin: 'java'
-sourceCompatibility = '11'
+sourceCompatibility = '21'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 compileJava.destinationDirectory = file("$rootDir/deployment/run/bin")
+
+// Mendix installation used to compile against; override with -PmendixHome=<path>
+def mendixHome = findProperty('mendixHome') ?: '/c://Program Files/Mendix/10.24.27.128337'
 
 repositories {
     mavenCentral()
     flatDir {
-        dirs '/c://Program Files/Mendix/9.24.3.8044/runtime/bundles'
+        dirs "$mendixHome/runtime/bundles"
     }
 }
 
@@ -29,7 +32,7 @@ dependencies {
     implementation name: 'com.mendix.json'
     implementation name: 'com.mendix.logging-api'
     implementation name: 'com.mendix.m2ee-api'
-    implementation name: 'javax.servlet.servlet-api'
+    implementation name: 'org.eclipse.jetty.toolchain.jetty-servlet-api'
     implementation group: 'net.datafaker', name: 'datafaker', version: '1.9.0'
 
     // test
@@ -97,14 +100,18 @@ task getExportLibs(type: Copy) {
     }
 }
 
-task exportModule(type: Exec,dependsOn: 'getExportLibs'){
-    commandLine "\\Program Files\\Mendix\\9.24.3.8044\\modeler\\mxutil.exe", "create-module-package", "CsvServices.mpr", "CsvServices", "--package-dir=DIST"
+// Marketplace package. Java dependencies are managed in the module settings and bundled by mx,
+// so no userlib jars are needed; the Tests module's resource file is left out.
+def moduleVersion = '3.0.0'
+task exportModule(type: Exec){
+    commandLine "$mendixHome/modeler/mx", "create-module-package", "CsvServices.mpr", "CsvServices",
+            "--package-dir=DIST", "--exclude-files=AllTypesTestData1\\.csv"
     doLast {
         copy {
             from 'DIST'
             include 'CsvServices.mpk'
             into 'DIST'
-            rename 'CsvServices.mpk', 'CsvServices-2.5.mpk'
+            rename 'CsvServices.mpk', "CsvServices-${moduleVersion}.mpk"
         }
     }
 }

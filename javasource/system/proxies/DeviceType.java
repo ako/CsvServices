@@ -6,27 +6,25 @@ package system.proxies;
 
 public enum DeviceType
 {
-	Phone(new java.lang.String[][] { new java.lang.String[] { "en_US", "Phone" }, new java.lang.String[] { "nl_NL", "Phone" } }),
-	Tablet(new java.lang.String[][] { new java.lang.String[] { "en_US", "Tablet" }, new java.lang.String[] { "nl_NL", "Tablet" } }),
-	Desktop(new java.lang.String[][] { new java.lang.String[] { "en_US", "Desktop" }, new java.lang.String[] { "nl_NL", "Desktop" } });
+	Phone("14995df6-c780-4977-aee9-1bf31a9f3089"),
+	Tablet("1209c7ed-28e2-4a1b-9d8e-3a62487db39f"),
+	Desktop("c6fcd3aa-7ea8-4aca-88bc-de6542bd4afe");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private DeviceType(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private DeviceType(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }

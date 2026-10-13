@@ -12,24 +12,28 @@ package csvservices.actions;
 import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.CsvExporter;
 import csvservices.impl.CsvServicesImpl;
 import java.io.ByteArrayInputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class ExportCsvData extends CustomJavaAction<java.lang.String>
+public class ExportCsvData extends UserAction<java.lang.String>
 {
-	private java.lang.String Entity;
-	private java.lang.String Delimiter;
+	private final java.lang.String Entity;
+	private final java.lang.String Delimiter;
 
-	public ExportCsvData(IContext context, java.lang.String Entity, java.lang.String Delimiter)
+	public ExportCsvData(
+		IContext context,
+		java.lang.String _entity,
+		java.lang.String _delimiter
+	)
 	{
 		super(context);
-		this.Entity = Entity;
-		this.Delimiter = Delimiter;
+		this.Entity = _entity;
+		this.Delimiter = _delimiter;
 	}
 
 	@java.lang.Override

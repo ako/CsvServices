@@ -19,7 +19,7 @@ import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
 import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
-import com.mendix.webui.CustomJavaAction;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
 /**
  * Performs deletion on items directly, without having to retrieve them.
@@ -30,16 +30,20 @@ import com.mendix.webui.CustomJavaAction;
  *  - Entities used in inheritance (either specializations or generalizations)
  * 
  */
-public class DeleteEntitiesDirectly extends CustomJavaAction<java.lang.Long>
+public class DeleteEntitiesDirectly extends UserAction<java.lang.Long>
 {
-	private java.lang.String entity;
-	private java.lang.String constraint;
+	private final java.lang.String entity;
+	private final java.lang.String constraint;
 
-	public DeleteEntitiesDirectly(IContext context, java.lang.String entity, java.lang.String constraint)
+	public DeleteEntitiesDirectly(
+		IContext context,
+		java.lang.String _entity,
+		java.lang.String _constraint
+	)
 	{
 		super(context);
-		this.entity = entity;
-		this.constraint = constraint;
+		this.entity = _entity;
+		this.constraint = _constraint;
 	}
 
 	@java.lang.Override

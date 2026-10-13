@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -64,6 +65,23 @@ public class CsvLoader {
             }
             return result;
         });
+    }
+
+    private static final Pattern COLUMN_NAME = Pattern.compile("[A-Za-z_][A-Za-z0-9_]*");
+
+    /*
+     * Column names come from the csv header and end up in DDL, so only plain identifiers are accepted.
+     * Quoted and lower-cased: the same column name Postgres gave the unquoted name, reserved words allowed.
+     */
+    static String columnIdentifier(String headerName) {
+        String name = headerName.replace("\uFEFF", "").trim();
+        if (name.length() >= 2 && name.startsWith("\"") && name.endsWith("\"")) {
+            name = name.substring(1, name.length() - 1).trim();
+        }
+        if (!COLUMN_NAME.matcher(name).matches()) {
+            throw new IllegalArgumentException("Invalid csv column name for loader table: " + headerName);
+        }
+        return "\"" + name.toLowerCase() + "\"";
     }
 
     public void loadCsvFile(String entity, InputStream is, IContext ctx
@@ -127,17 +145,17 @@ public class CsvLoader {
         });
         logger.info(String.format("col names: %s",String.join(",",colNames)));
         //
+        // validate the column names before dropping anything
+        String select = IntStream
+                .range(0,colNames.length)
+                .mapToObj(i -> {return String.format("col[%d] as %s",(i+1),columnIdentifier(colNames[i]));})
+                .collect(Collectors.joining(","));
+        logger.info(String.format("view cols: %s",select));
         logger.info("loadCsvFile.4 - drop view");
         String sql3 = String.format("drop view if exists %s_vw cascade", table);
         executeSqlStatement(sql3);
         //
-        //String select = Arrays.stream(colNames).map(item -> " col[] as " + item).collect(Collectors.joining(","));
         logger.info("loadCsvFile.5 - create view");
-        String select = IntStream
-                .range(0,colNames.length)
-                .mapToObj(i -> {return String.format("col[%d] as %s",(i+1),colNames[i]);})
-                .collect(Collectors.joining(","));
-        logger.info(String.format("view cols: %s",select));
         String sql4 = String.format("create or replace view %s_vw as (" +
                 "with lines as (\n" +
                 "    select id as ldr_id, regexp_split_to_table(datafile,'\\n') as line\n" +

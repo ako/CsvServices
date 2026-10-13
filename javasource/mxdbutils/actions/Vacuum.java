@@ -16,22 +16,26 @@ import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.meta.IMetaObject;
-import com.mendix.webui.CustomJavaAction;
 import mxdbutils.helpers.DbHelper;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
 /**
  * Performs a VACUUM on a table (optional FULL).
  */
-public class Vacuum extends CustomJavaAction<java.lang.Boolean>
+public class Vacuum extends UserAction<java.lang.Boolean>
 {
-	private java.lang.String entity;
-	private java.lang.Boolean full;
+	private final java.lang.String entity;
+	private final java.lang.Boolean full;
 
-	public Vacuum(IContext context, java.lang.String entity, java.lang.Boolean full)
+	public Vacuum(
+		IContext context,
+		java.lang.String _entity,
+		java.lang.Boolean _full
+	)
 	{
 		super(context);
-		this.entity = entity;
-		this.full = full;
+		this.entity = _entity;
+		this.full = _full;
 	}
 
 	@java.lang.Override

@@ -37,17 +37,11 @@ public class CsvRestHandler extends RequestHandler {
          * Validate credentials
          */
 
-        IContext context = null;
-        if (!Core.getConfiguration().isInDevelopment() && !Core.getConfiguration().getApplicationRootUrl().contains(".mxapps.io")) {
-            logger.info("Not running in development, checking username password");
-            context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
-            if (context == null) {
-                iMxRuntimeResponse.setStatus(401);
-                return;
-            }
-        } else {
-            logger.info("Running in development, skipping username password validation.");
-            context = Core.createSystemContext();
+        // Always required: isInDevelopment() is also true in Test environments, which are publicly reachable
+        IContext context = validateCredentials(iMxRuntimeRequest.getHttpServletRequest());
+        if (context == null) {
+            iMxRuntimeResponse.setStatus(401);
+            return;
         }
         /*
          * get path
@@ -66,32 +60,26 @@ public class CsvRestHandler extends RequestHandler {
         logger.debug("method: " + iMxRuntimeRequest.getHttpServletRequest().getMethod());
         if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("POST")) {
             // inserting new objects
-            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Use-SQL") != null &&
-                    iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Use-SQL").equalsIgnoreCase("true")) {
-                CsvImporterSql importer = new CsvImporterSql();
-                importer.csvToEntities(context, writer, path[0], path[1], iMxRuntimeRequest.getInputStream());
-            } else {
-                CsvImporter importer = new CsvImporter();
-                int parMaxRecords = -1;
-                boolean parHasHeader = true;
-                String parAlternativeHeader = null;
-                String parDelimiter = null;
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Max-Records") != null) {
-                    parMaxRecords = iMxRuntimeRequest.getHttpServletRequest().getIntHeader("X-Max-Records");
-                }
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header") != null) {
-                    parHasHeader =  Boolean.valueOf(iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header"));
-                }
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header") != null) {
-                    parAlternativeHeader = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header");
-                }
-                if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter") != null) {
-                    parDelimiter = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter");
-                }
-                importer.csvToEntities(context, writer, path[0], path[1],
-                        iMxRuntimeRequest.getInputStream(), false,
-                        parMaxRecords, parHasHeader, parAlternativeHeader, parDelimiter);
+            CsvImporter importer = new CsvImporter();
+            int parMaxRecords = -1;
+            boolean parHasHeader = true;
+            String parAlternativeHeader = null;
+            String parDelimiter = null;
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Max-Records") != null) {
+                parMaxRecords = iMxRuntimeRequest.getHttpServletRequest().getIntHeader("X-Max-Records");
             }
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header") != null) {
+                parHasHeader =  Boolean.valueOf(iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Has-Header"));
+            }
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header") != null) {
+                parAlternativeHeader = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Alternative-Header");
+            }
+            if (iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter") != null) {
+                parDelimiter = iMxRuntimeRequest.getHttpServletRequest().getHeader("X-Delimiter");
+            }
+            importer.csvToEntities(context, writer, path[0], path[1],
+                    iMxRuntimeRequest.getInputStream(), false,
+                    parMaxRecords, parHasHeader, parAlternativeHeader, parDelimiter);
         } else if (iMxRuntimeRequest.getHttpServletRequest().getMethod().equals("GET")) {
             /*
              * retrieve all objects from entities, return as csv (comma separated values)
@@ -133,17 +121,22 @@ public class CsvRestHandler extends RequestHandler {
         String password = null;
         ISession session = null;
         IContext context = null;
-        logger.info("authorization: " + authHeader);
         if (authHeader != null && authHeader.trim().startsWith("Basic")) {
             String base64Credentials = authHeader.trim().substring("Basic".length()).trim();
             //String base64 = new String(javax.xml.bind.DatatypeConverter.parseBase64Binary(base64Credentials));
-            String base64 = new String(Base64.getDecoder().decode(base64Credentials));
-            logger.info("credentials: " + base64);
-            String[] parts = base64.split(":");
-            username = parts[0];
-            password = parts[1];
+            String base64;
+            try {
+                base64 = new String(Base64.getDecoder().decode(base64Credentials));
+            } catch (IllegalArgumentException e) {
+                return null;
+            }
+            String[] parts = base64.split(":", 2);
+            if (parts.length == 2) {
+                username = parts[0];
+                password = parts[1];
+            }
         }
-        logger.info("username: " + username + "," + password);
+        logger.info("username: " + username);
         if (username != null) {
             try {
                 session = Core.login(username, password);

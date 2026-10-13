@@ -6,28 +6,26 @@ package system.proxies;
 
 public enum EventStatus
 {
-	Running(new java.lang.String[][] { new java.lang.String[] { "en_US", "Running" }, new java.lang.String[] { "nl_NL", "Bezig" } }),
-	Completed(new java.lang.String[][] { new java.lang.String[] { "en_US", "Completed" }, new java.lang.String[] { "nl_NL", "Voltooid" } }),
-	Error(new java.lang.String[][] { new java.lang.String[] { "en_US", "Error" }, new java.lang.String[] { "nl_NL", "Fout" } }),
-	Stopped(new java.lang.String[][] { new java.lang.String[] { "en_US", "Stopped" } });
+	Running("e5a09578-41d0-4c81-a016-6293071f77b3"),
+	Completed("63aca8cf-bc5a-4bdf-960d-616030d7671a"),
+	Error("5d87b5df-e2c1-4949-8b7b-454f5706522f"),
+	Stopped("c245b583-326c-4971-b94b-334c19eb555e");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private EventStatus(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private EventStatus(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }

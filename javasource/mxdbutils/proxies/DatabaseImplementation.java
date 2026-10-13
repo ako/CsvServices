@@ -6,29 +6,27 @@ package mxdbutils.proxies;
 
 public enum DatabaseImplementation
 {
-	PostgreSQL(new java.lang.String[][] { new java.lang.String[] { "en_US", "PostgreSQL" } }),
-	SQL_Server(new java.lang.String[][] { new java.lang.String[] { "en_US", "SQL Server" } }),
-	Oracle(new java.lang.String[][] { new java.lang.String[] { "en_US", "Oracle" } }),
-	MySQL(new java.lang.String[][] { new java.lang.String[] { "en_US", "MySQL" } }),
-	HSQLDB(new java.lang.String[][] { new java.lang.String[] { "en_US", "HSQLDB" } });
+	PostgreSQL("1e54f79d-f0a8-4a03-af49-090673faf587"),
+	SQL_Server("32a293ea-1851-4a03-9f91-d904de2044be"),
+	Oracle("5e6d6c00-924d-44f9-93f9-fe8b114f441d"),
+	MySQL("cf30bfce-fe27-4995-867d-148716e6fe5b"),
+	HSQLDB("e2f7492d-6c68-4250-b33a-1802664fff68");
 
-	private final java.util.Map<java.lang.String, java.lang.String> captions;
-
-	private DatabaseImplementation(java.lang.String[][] captionStrings)
+	private final java.lang.String i18nCaptionKey;
+	
+	private DatabaseImplementation(java.lang.String i18nCaptionKey)
 	{
-		this.captions = new java.util.HashMap<>();
-		for (java.lang.String[] captionString : captionStrings) {
-			captions.put(captionString[0], captionString[1]);
-		}
+		this.i18nCaptionKey = i18nCaptionKey;
 	}
 
 	public java.lang.String getCaption(java.lang.String languageCode)
 	{
-		return captions.getOrDefault(languageCode, "en_US");
+		String caption = com.mendix.core.Core.getInternationalizedString(languageCode, i18nCaptionKey);
+		return caption.isEmpty() ? getCaption() : caption;
 	}
 
 	public java.lang.String getCaption()
 	{
-		return captions.get("en_US");
+		return com.mendix.core.Core.getInternationalizedString("en_US", i18nCaptionKey);
 	}
 }

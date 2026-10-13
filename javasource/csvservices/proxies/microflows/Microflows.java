@@ -4,31 +4,46 @@
 
 package csvservices.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the CsvServices module
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_StartCsvServicesBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("CsvServices.MF_StartCsvServices");
+		return builder;
+	}
+
 	public static boolean mF_StartCsvServices(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		return (java.lang.Boolean) Core.microflowCall("CsvServices.MF_StartCsvServices").withParams(params).execute(context);
+		Object result = mF_StartCsvServicesBuilder().execute(context);
+		return (boolean) result;
 	}
-	public static boolean mF_StartCsvServices_DefaultRole(IContext context, java.lang.String _user_Role)
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder mF_StartCsvServices_DefaultRoleBuilder(
+		java.lang.String _user_Role
+	)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		params.put("User_Role", _user_Role);
-		return (java.lang.Boolean) Core.microflowCall("CsvServices.MF_StartCsvServices_DefaultRole").withParams(params).execute(context);
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("CsvServices.MF_StartCsvServices_DefaultRole");
+		builder = builder.withParam("User_Role", _user_Role);
+		return builder;
+	}
+
+	public static boolean mF_StartCsvServices_DefaultRole(
+		IContext context,
+		java.lang.String _user_Role
+	)
+	{
+		Object result = mF_StartCsvServices_DefaultRoleBuilder(
+				_user_Role
+			)
+			.execute(context);
+		return (boolean) result;
 	}
 }

@@ -12,26 +12,33 @@ package csvservices.actions;
 import com.mendix.core.Core;
 import com.mendix.logging.ILogNode;
 import com.mendix.systemwideinterfaces.core.IContext;
-import com.mendix.webui.CustomJavaAction;
 import csvservices.impl.DataGenerator;
 import java.util.StringTokenizer;
+import com.mendix.systemwideinterfaces.core.UserAction;
 
-public class GenerateData extends CustomJavaAction<java.lang.String>
+public class GenerateData extends UserAction<java.lang.String>
 {
-	private java.lang.String Header;
-	private java.lang.String ColumnExpressions;
-	private java.lang.String Delimiter;
-	private java.lang.Long RecordCount;
-	private java.lang.String DataPattern;
+	private final java.lang.String Header;
+	private final java.lang.String ColumnExpressions;
+	private final java.lang.String Delimiter;
+	private final java.lang.Long RecordCount;
+	private final java.lang.String DataPattern;
 
-	public GenerateData(IContext context, java.lang.String Header, java.lang.String ColumnExpressions, java.lang.String Delimiter, java.lang.Long RecordCount, java.lang.String DataPattern)
+	public GenerateData(
+		IContext context,
+		java.lang.String _header,
+		java.lang.String _columnExpressions,
+		java.lang.String _delimiter,
+		java.lang.Long _recordCount,
+		java.lang.String _dataPattern
+	)
 	{
 		super(context);
-		this.Header = Header;
-		this.ColumnExpressions = ColumnExpressions;
-		this.Delimiter = Delimiter;
-		this.RecordCount = RecordCount;
-		this.DataPattern = DataPattern;
+		this.Header = _header;
+		this.ColumnExpressions = _columnExpressions;
+		this.Delimiter = _delimiter;
+		this.RecordCount = _recordCount;
+		this.DataPattern = _dataPattern;
 	}
 
 	@java.lang.Override

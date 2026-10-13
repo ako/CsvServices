@@ -4,44 +4,67 @@
 
 package mxdbutils.proxies.microflows;
 
-import java.util.HashMap;
-import java.util.Map;
 import com.mendix.core.Core;
 import com.mendix.systemwideinterfaces.core.IContext;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 
-public class Microflows
+public final class Microflows
 {
 	/**
-	 * @deprecated
-	 * The default constructor of the Microflows class should not be used.
-	 * Use the static microflow invocation methods instead.
+	 * Private constructor to prevent instantiation of this class. 
 	 */
-	@java.lang.Deprecated(since = "9.12", forRemoval = true)
-	public Microflows() {}
+	private Microflows() {}
 
 	// These are the microflows for the MxDbUtils module
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder dS_GetDatabaseBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("MxDbUtils.DS_GetDatabase");
+		return builder;
+	}
+
 	public static void dS_GetDatabase(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		Core.microflowCall("MxDbUtils.DS_GetDatabase").withParams(params).execute(context);
+		dS_GetDatabaseBuilder().execute(context);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder dS_GetDatabaseInformationBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("MxDbUtils.DS_GetDatabaseInformation");
+		return builder;
+	}
+
 	public static mxdbutils.proxies.DatabaseInformation dS_GetDatabaseInformation(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		IMendixObject result = (IMendixObject)Core.microflowCall("MxDbUtils.DS_GetDatabaseInformation").withParams(params).execute(context);
-		return result == null ? null : mxdbutils.proxies.DatabaseInformation.initialize(context, result);
+		Object result = dS_GetDatabaseInformationBuilder().execute(context);
+		return result == null ? null : mxdbutils.proxies.DatabaseInformation.initialize(context, (IMendixObject) result);
 	}
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder dS_GetQueryBuilder()
+	{
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("MxDbUtils.DS_GetQuery");
+		return builder;
+	}
+
 	public static mxdbutils.proxies.Query dS_GetQuery(IContext context)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		IMendixObject result = (IMendixObject)Core.microflowCall("MxDbUtils.DS_GetQuery").withParams(params).execute(context);
-		return result == null ? null : mxdbutils.proxies.Query.initialize(context, result);
+		Object result = dS_GetQueryBuilder().execute(context);
+		return result == null ? null : mxdbutils.proxies.Query.initialize(context, (IMendixObject) result);
 	}
-	public static void iVK_ExecuteQuery(IContext context, mxdbutils.proxies.Query _query)
+	public static com.mendix.core.actionmanagement.MicroflowCallBuilder iVK_ExecuteQueryBuilder(
+		mxdbutils.proxies.Query _query
+	)
 	{
-		Map<java.lang.String, Object> params = new HashMap<>();
-		params.put("Query", _query == null ? null : _query.getMendixObject());
-		Core.microflowCall("MxDbUtils.IVK_ExecuteQuery").withParams(params).execute(context);
+		com.mendix.core.actionmanagement.MicroflowCallBuilder builder = Core.microflowCall("MxDbUtils.IVK_ExecuteQuery");
+		builder = builder.withParam("Query", _query);
+		return builder;
+	}
+
+	public static void iVK_ExecuteQuery(
+		IContext context,
+		mxdbutils.proxies.Query _query
+	)
+	{
+		iVK_ExecuteQueryBuilder(
+				_query
+			)
+			.execute(context);
 	}
 }
