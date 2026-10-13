@@ -267,3 +267,71 @@ $created = call microflow Tests.TST_ImportCsvUrl(CsvUrl = 'file:///etc/passwd', 
  */
 $created = call microflow Tests.TST_ImportCsvUrl(CsvUrl = 'http://127.0.0.1:1/unreachable.csv', ToLoaderTable = false);
 /
+
+/**
+ * @test rows with an invalid number are rejected, valid rows are stored (issue 6)
+ * @expect $created = 1
+ * @expect $good/IntegerValue = 12
+ * @expect $decimal = empty
+ * @expect $text = empty
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,IntegerValue
+invalid-int-decimal,0.00
+invalid-int-good,12
+invalid-int-text,abc
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $good from Tests.AllTypes where StringValue = 'invalid-int-good' first;
+retrieve $decimal from Tests.AllTypes where StringValue = 'invalid-int-decimal' first;
+retrieve $text from Tests.AllTypes where StringValue = 'invalid-int-text' first;
+/
+
+/**
+ * @test a row with a date that does not parse is rejected
+ * @expect $created = 0
+ * @expect $row = empty
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.Dates', CsvData = 'DateTimeString*,DateTime2
+invalid-date-1,not a date
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.Dates where DateTimeString = 'invalid-date-1' first;
+/
+
+/**
+ * @test an empty numeric cell is accepted and left empty
+ * @expect $created = 1
+ * @expect $row != empty
+ * @expect $row/LongValue = 5
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,IntegerValue,LongValue
+empty-int-1,,5
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'empty-int-1' first;
+/
+
+/**
+ * @test a rejected update leaves the existing row unchanged
+ * @expect $row/IntegerValue = 7
+ * @expect $row/LongValue = 70
+ */
+$a = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,IntegerValue,LongValue
+reject-update-1,7,70
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+$b = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,LongValue,IntegerValue
+reject-update-1,99,1.5
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $row from Tests.AllTypes where StringValue = 'reject-update-1' first;
+/
+
+/**
+ * @test enumeration values match their key ignoring case; unknown values reject the row
+ * @expect $created = 1
+ * @expect $lower/EnumValue = Tests.YesNoEnum.Yes
+ * @expect $unknown = empty
+ */
+$created = call java action CsvServices.ImportCsvData(Entity = 'Tests.AllTypes', CsvData = 'StringValue*,EnumValue
+enum-lower-1,yes
+enum-unknown-1,maybe
+', MaxRecords = -1, HasHeader = true, AlternativeHeader = empty, Delimiter = empty);
+retrieve $lower from Tests.AllTypes where StringValue = 'enum-lower-1' first;
+retrieve $unknown from Tests.AllTypes where StringValue = 'enum-unknown-1' first;
+/

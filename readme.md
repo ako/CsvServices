@@ -355,6 +355,12 @@ This writes `DIST/CsvServices-3.0.0.mpk`; the Java dependencies are bundled in t
     * Upgrade to Mendix 9.24
     * Fake data generator activity
 
+  * Unreleased
+
+    * A row with a value that cannot be stored (for example a decimal or text in an integer column, or a date that does not parse) is no longer committed with that value left empty: the row is rejected and reported with its row number, column, value and reason (issue #6). The other rows are still imported. Empty cells are still allowed.
+    * Enumeration values match the enumeration key ignoring case
+    * The import result includes rows_rejected, and objects_created no longer counts rejected rows
+
   * 3.0 (2026-10-13)
 
     Breaking changes:

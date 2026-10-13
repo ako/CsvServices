@@ -10,6 +10,7 @@ import com.mendix.systemwideinterfaces.core.IMendixIdentifier;
 import com.mendix.systemwideinterfaces.core.IMendixObject;
 import com.mendix.systemwideinterfaces.core.UserException;
 import com.mendix.systemwideinterfaces.core.meta.IMetaAssociation;
+import com.mendix.systemwideinterfaces.core.meta.IMetaEnumValue;
 import com.mendix.systemwideinterfaces.core.meta.IMetaPrimitive;
 import com.mendix.thirdparty.org.json.JSONArray;
 import com.mendix.thirdparty.org.json.JSONObject;
@@ -50,6 +51,7 @@ public class CsvImporter {
         String line = "";
         int lineNo = 0;
         int objNo = 0;
+        int rowsRejected = 0;
         String[] attributeNames = null;
         String[] attributeFormats = null;
         Format[] attributeFormatters = null;
@@ -218,6 +220,8 @@ public class CsvImporter {
                         errorMessages.put("Failed to create a new object " + moduleName + "." + entityName + " due to: " + e.getMessage());
                     }
                 }
+                // first invalid value of this row; a row with one is rejected instead of committed
+                String rowError = null;
                 for (int i = 0; i < values.length; i++) {
                     try {
                         //values[i] = values[i].trim().replaceAll("^\"|\"$", "");
@@ -311,15 +315,27 @@ public class CsvImporter {
                             values[i] = values[i].trim();
                             try {
                                 if (type.equals(IMetaPrimitive.PrimitiveType.DateTime)) {
-                                    object.setValue(ctx, attributeNames[i], toDateValue(values[i], attributeFormatters[i]));
+                                    Object date = toDateValue(values[i], attributeFormatters[i]);
+                                    if (date == null && !values[i].isEmpty()) {
+                                        throw new IllegalArgumentException("not a valid date");
+                                    }
+                                    object.setValue(ctx, attributeNames[i], date);
+                                } else if (values[i].isEmpty() && !type.equals(IMetaPrimitive.PrimitiveType.String)) {
+                                    // an empty cell leaves a number, boolean or enumeration empty
+                                    object.setValue(ctx, attributeNames[i], null);
+                                } else if (type.equals(IMetaPrimitive.PrimitiveType.Enum)) {
+                                    object.setValue(ctx, attributeNames[i],
+                                            enumKey(object.getMetaObject().getMetaPrimitive(attributeNames[i]), values[i]));
                                 } else {
                                     object.setValue(ctx, attributeNames[i], values[i]);
                                 }
                             } catch (Exception e) {
-                                logger.debug(String.format("Attribute %s cannot be set", attributeNames[i]));
-                                errorMessages.put(String.format("Attribute %s cannot be set", attributeNames[i]));
                                 if (strict) {
                                     throw e;
+                                }
+                                if (rowError == null) {
+                                    rowError = String.format("Row %d, column %s: invalid value '%s' (%s)",
+                                            objNo + 1, attributeNames[i], values[i], e.getMessage());
                                 }
                             }
                         }
@@ -331,8 +347,17 @@ public class CsvImporter {
                         }
                     }
                 }
-                logger.debug("commiting object: " + object);
-                Core.commit(ctx, object);
+                if (rowError != null) {
+                    logger.debug("rejecting row: " + rowError);
+                    errorMessages.put(rowError);
+                    rowsRejected++;
+                    if (object != null) {
+                        Core.rollback(ctx, object);
+                    }
+                } else {
+                    logger.debug("commiting object: " + object);
+                    Core.commit(ctx, object);
+                }
             } catch (CoreException e) {
                 logger.warn(e);
                 logger.warn("failed to create object: " + object);
@@ -361,15 +386,19 @@ public class CsvImporter {
         ctx.endTransaction();
         context.startTransaction();
 
-        logger.info("objects created: " + objNo);
+        int objectsStored = objNo - rowsRejected;
+        logger.info("objects created: " + objectsStored + ", rows rejected: " + rowsRejected);
         JSONObject response = new JSONObject();
         response.put("lines_processed", lineNo);
-        response.put("objects_created", objNo);
+        response.put("objects_created", objectsStored);
+        response.put("rows_rejected", rowsRejected);
         if (errorMessages.length() == 0) {
             response.put("status", "successfully created objects");
         } else {
             logger.warn("# Errors during import: " + errorMessages.length());
-            logger.warn(errorMessages.get(0));
+            for (int e = 0; e < Math.min(errorMessages.length(), 20); e++) {
+                logger.warn(errorMessages.get(e));
+            }
             response.put("status", "Failure during object creation");
             response.put("numberOfErrors", errorMessages.length());
             //response.put("errors",errorMessages.subList(0,Math.min(10,errorMessages.length())).toArray());
@@ -384,7 +413,19 @@ public class CsvImporter {
             logger.error(e.getMessage());
         }
         writer.write(responseString);
-        return objNo;
+        return objectsStored;
+    }
+
+    /*
+     * The enumeration key matching value, ignoring case; value itself when none matches
+     */
+    private String enumKey(IMetaPrimitive primitive, String value) {
+        for (IMetaEnumValue enumValue : primitive.getEnumValues()) {
+            if (enumValue.getIdentifier().equalsIgnoreCase(value)) {
+                return enumValue.getIdentifier();
+            }
+        }
+        return value;
     }
 
     /*
