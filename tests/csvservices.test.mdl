@@ -4,7 +4,8 @@ mdl 1;
  *
  *   mxcli test tests/ -p CsvServices.mpr --local --db-type hsqldb
  *
- * userlib/ must be populated first (gradlew getExportLibs).
+ * The module's Java dependencies (datafaker, jackson-dataformat-csv) must be in
+ * vendorlib/ first: Studio Pro downloads them, or run `mx sync-java-dependencies`.
  * Each test's writes are rolled back afterwards (the default @cleanup), so
  * every test sets up the data it needs. Tests also use their own key values,
  * so they stay independent if run with @cleanup none or against a live app.

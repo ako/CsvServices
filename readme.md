@@ -278,7 +278,7 @@ The `tests/` folder holds tests for the microflow actions (import, export, data 
 written for [mxcli](https://github.com/mendixlabs/mxcli). They run against a real Mendix runtime
 with a scratch database and leave the project unchanged:
 
-    gradlew getExportLibs
+    mx sync-java-dependencies CsvServices.mpr
     mxcli test tests/ -p CsvServices.mpr --local --db-type hsqldb
 
 The first run downloads the matching Mendix runtime. Each test's database changes are rolled back afterwards.
@@ -355,6 +355,7 @@ The first run downloads the matching Mendix runtime. Each test's database change
     * Fixed csv export failing on entities with a binary attribute on Mendix 10
     * Fixed import skipping all lines after a # comment line
     * Added mxcli tests for the microflow actions (tests/)
+    * Java dependencies (datafaker, jackson-dataformat-csv) are now managed dependencies in the module settings, so Studio Pro downloads them; no more userlib jars or Gradle step
 
     
  [1]: docs/csv-import-mf-action.png
