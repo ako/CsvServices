@@ -355,12 +355,6 @@ This writes `DIST/CsvServices-3.0.0.mpk`; the Java dependencies are bundled in t
     * Upgrade to Mendix 9.24
     * Fake data generator activity
 
-  * Unreleased
-
-    * A row with a value that cannot be stored (for example a decimal or text in an integer column, or a date that does not parse) is no longer committed with that value left empty: the row is rejected and reported with its row number, column, value and reason (issue #6). The other rows are still imported. Empty cells are still allowed.
-    * Enumeration values match the enumeration key ignoring case
-    * The import result includes rows_rejected, and objects_created no longer counts rejected rows
-
   * 3.0 (2026-10-13)
 
     Breaking changes:
@@ -369,6 +363,8 @@ This writes `DIST/CsvServices-3.0.0.mpk`; the Java dependencies are bundled in t
     * The endpoint always checks a user role: an empty role name now means Csv_Services_User instead of no check
     * Url imports only accept http and https urls, and raise an error when the download fails instead of returning 0
     * Removed the unfinished X-Use-SQL import
+    * A row with a value that cannot be stored (for example a decimal or text in an integer column, or a date that does not parse) is rejected and reported with its row number, column, value and reason, instead of being committed with that value left empty (issue #6). The other rows are still imported; empty cells are still allowed.
+    * The import result includes rows_rejected, and objects_created no longer counts rejected rows
 
     Changes:
     * Security: the csv endpoint now always requires credentials (previously skipped in development, test and *.mxapps.io environments)
@@ -378,6 +374,7 @@ This writes `DIST/CsvServices-3.0.0.mpk`; the Java dependencies are bundled in t
     * Fixed csv export stopping after 10 records on Mendix 10
     * Fixed csv export failing on entities with a binary attribute on Mendix 10
     * Fixed import skipping all lines after a # comment line
+    * Enumeration values match the enumeration key ignoring case
     * Added mxcli tests for the microflow actions (tests/)
     * Java dependencies (datafaker, jackson-dataformat-csv) are now managed dependencies in the module settings, so Studio Pro downloads them; no more userlib jars or Gradle step
 
