@@ -29,11 +29,12 @@ Retrieve all records in ProductLabels:
 To install:
 
  1. Import the module into your project.
- 2. Configure your project to call MF_StartCsvServices in the after startup. You can provide a user_role name when calling the MF_StartCsvServices microflow. All calls to the csv services endpoints will be validated to have this user role.
+ 2. Configure your project to call MF_StartCsvServices in the after startup. It requires callers of the csv services endpoints to have the user role Csv_Services_User. To use a different user role, call MF_StartCsvServices_DefaultRole with the name of that user role instead; an empty name also means Csv_Services_User.
 
 Notes:
 
- 1. Currently you need to provide a username and password when calling a csv services endpoint. Anonymous usage is not supported.
+ 1. You need to provide a username and password when calling a csv services endpoint, also when running locally. Anonymous usage is not supported.
+ 2. Requires Mendix 10.24 or later. The module's Java dependencies (datafaker, jackson-dataformat-csv) are managed dependencies; Studio Pro downloads them.
  
 ## Usage
 
@@ -242,9 +243,9 @@ Order - Orderlines
 
 When enabling this module, endpoints are available for *all* entities in your application. 
 
-To avoid misuse, all calls to the csv services endpoints need to be authenticated if not running in development mode. Currently only basic-authentication is implemented.
+To avoid misuse, all calls to the csv services endpoints need to be authenticated with basic authentication, and the account needs the configured user role (default Csv_Services_User). Calls run with that account's permissions, so entity access rules apply.
 
-Optionally you can provide a user role name when calling the startup microflow. Accounts will need to have this role.
+The url import actions only accept http and https urls.
 
 ### Using Powershell on Windows
 
@@ -278,10 +279,17 @@ The `tests/` folder holds tests for the microflow actions (import, export, data 
 written for [mxcli](https://github.com/mendixlabs/mxcli). They run against a real Mendix runtime
 with a scratch database and leave the project unchanged:
 
-    mx sync-java-dependencies CsvServices.mpr
     mxcli test tests/ -p CsvServices.mpr --local --db-type hsqldb
 
 The first run downloads the matching Mendix runtime. Each test's database changes are rolled back afterwards.
+
+### Publishing to the Marketplace
+
+Export the module package with Studio Pro (right-click the CsvServices module, Export module package), or with the gradle task, which also leaves out the test data file in `resources/`:
+
+    gradlew exportModule -PmendixHome="C:/Program Files/Mendix/10.24.27.128337"
+
+This writes `DIST/CsvServices-3.0.0.mpk`; the Java dependencies are bundled in the package. Upload it as a new version in the Marketplace portal, with Mendix 10.24 as the minimum version.
 
 ### Todo
 
@@ -347,10 +355,20 @@ The first run downloads the matching Mendix runtime. Each test's database change
     * Upgrade to Mendix 9.24
     * Fake data generator activity
 
-  * Unreleased
-    * Upgrade to Mendix 10.24 (LTS), Java 21
+  * 3.0 (2026-10-13)
+
+    Breaking changes:
+    * Requires Mendix 10.24 (LTS) and Java 21
+    * The csv endpoint always requires credentials, also in development (previously skipped in development, test and *.mxapps.io environments)
+    * The endpoint always checks a user role: an empty role name now means Csv_Services_User instead of no check
+    * Url imports only accept http and https urls, and raise an error when the download fails instead of returning 0
+    * Removed the unfinished X-Use-SQL import
+
+    Changes:
     * Security: the csv endpoint now always requires credentials (previously skipped in development, test and *.mxapps.io environments)
-    * Security: fixed XPath injection in key lookups, removed credential logging and the unfinished X-Use-SQL import
+    * Security: fixed XPath injection in key lookups and removed credential logging
+    * Security: fixed SQL injection through csv column names in the load-to-loader-table action
+    * Security: url imports no longer read local files (file:, jar: urls), and use connect and read timeouts
     * Fixed csv export stopping after 10 records on Mendix 10
     * Fixed csv export failing on entities with a binary attribute on Mendix 10
     * Fixed import skipping all lines after a # comment line

@@ -100,14 +100,18 @@ task getExportLibs(type: Copy) {
     }
 }
 
-task exportModule(type: Exec,dependsOn: 'getExportLibs'){
-    commandLine "$mendixHome/modeler/mx", "create-module-package", "CsvServices.mpr", "CsvServices", "--package-dir=DIST"
+// Marketplace package. Java dependencies are managed in the module settings and bundled by mx,
+// so no userlib jars are needed; the Tests module's resource file is left out.
+def moduleVersion = '3.0.0'
+task exportModule(type: Exec){
+    commandLine "$mendixHome/modeler/mx", "create-module-package", "CsvServices.mpr", "CsvServices",
+            "--package-dir=DIST", "--exclude-files=AllTypesTestData1\\.csv"
     doLast {
         copy {
             from 'DIST'
             include 'CsvServices.mpk'
             into 'DIST'
-            rename 'CsvServices.mpk', 'CsvServices-2.5.mpk'
+            rename 'CsvServices.mpk', "CsvServices-${moduleVersion}.mpk"
         }
     }
 }
