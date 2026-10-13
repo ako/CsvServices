@@ -97,7 +97,7 @@ def changes(p, c):
     upgraded = bool(p['units']) and p['version'] != c['version']
     for uid, (cont, h, _) in c['units'].items():
         if uid not in p['units']: add(c, 'Added', uid)
-        elif p['units'][uid][1] != h and changed(p, c, uid): add(c, 'Modified', uid)
+        elif (p['units'][uid][1] != h or p['units'][uid][2] != c['units'][uid][2]) and changed(p, c, uid): add(c, 'Modified', uid)
         elif p['units'][uid][0] != cont: add(c, 'Moved', uid)
         elif upgraded and cont == uid: add(c, 'Modified', uid)
     for uid in p['units']:
