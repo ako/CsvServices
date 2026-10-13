@@ -32,3 +32,11 @@ bin
 /nativemobile/builds/
 ._build.gradle
 /build/*
+/vendorlib/temp/
+.DS_Store
+/.svn/
+/mprcontents/mprjournal*
+theme-cache/web/theme.compiled.css
+theme-cache/web/theme.compiled.css.map
+modules/javasource/*/proxies/*
+modules/javasource/system/*
